@@ -1,0 +1,158 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:kernel="clr-namespace:EmblemPaint.Kernel;assembly=EmblemPaint.Kernel"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:viewModel="clr-namespace:EmblemPaint.ViewModel">
+    <DataTemplate DataType="{x:Type viewModel:SelectRegionViewModel}">
+        <Grid>
+        <Grid.Resources>
+            <kernel:DoubleToIntValueConverter x:Key="DoubleToIntValueConverter"/>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        </Grid.Resources>
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="MouseMove">
+                <kernel:RoutedEventToCommandMap Command="{Binding Path=ActionCommand}"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="5*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" >
+            <Grid x:Name="HomeButtonGrid"  Width="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ActualHeight}">
+                <Button  BorderBrush="#FFB4B4B4" Command="{Binding Path=HomeCommand}" BorderThickness="0" 
+                         Width="{Binding ElementName=HomeButtonGrid, Path=Width}"
+                         Height="{Binding ElementName=HomeButtonGrid, Path=ActualHeight}">
+
+                    <Image Source="/Images/Home.png" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"
+                           Margin="20"/>
+
+                </Button>
+            </Grid>
+            <Grid Background="#FF979797">
+
+            </Grid>
+        </DockPanel>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0"  FontSize="40">
+            Приветствие
+            </TextBlock>
+            <TextBlock Grid.Row="1" TextWrapping="Wrap" FontSize="24">
+            Lorem ipsum dolor.
+                <LineBreak/>
+                Consectetur adipisicing elit
+            </TextBlock>
+        </Grid>
+        <Grid  Grid.Row="2" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="12*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.Background>
+                <ImageBrush ImageSource="../Images/background.png"></ImageBrush>
+            </Grid.Background>
+            <Grid Grid.Column="1" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="12*"/>
+                </Grid.RowDefinitions>
+                <TextBlock FontSize="20" Foreground="White" Margin="0,10,0,0">Выберите субъект РФ</TextBlock>
+                <ScrollViewer  x:Name="ScrollViewer" Grid.Row="1"
+                          Background="Transparent"
+                          PanningMode="HorizontalOnly"
+                          HorizontalAlignment="Stretch"
+                          VerticalContentAlignment="Center"
+                          HorizontalScrollBarVisibility="Hidden" 
+                          VerticalScrollBarVisibility="Hidden"
+                          kernel:ScrollViewerBinding.HorizontalOffset="{Binding Path=HorizontalOffset, Mode=TwoWay}"
+                               Margin="0,10">
+                    <kernel:PushBindingManager.PushBindings>
+                        <kernel:PushBinding TargetProperty="ViewportWidth" Path="VisibleWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
+                    </kernel:PushBindingManager.PushBindings>
+                    <ListView HorizontalContentAlignment="Stretch" 
+                          ItemsSource="{Binding Path=Regions}" 
+                          SelectedItem="{Binding Path=SelectedRegion}"
+                          BorderThickness="0"
+                          Background="Transparent">
+                        <ListView.Resources>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Template" Value="{StaticResource DefaultListViewItemTemplate}"></Setter>
+                                <Setter Property="IsSelected" Value="{Binding Path=(kernel:ListViewItemModel.IsSelected), Mode=TwoWay}"></Setter>
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" 
+                                       Height="{Binding ElementName=ScrollViewer, Path=ActualHeight}" 
+                                       Background="Transparent"
+                                       HorizontalAlignment="Stretch">
+                                    <kernel:PushBindingManager.PushBindings>
+                                        <kernel:PushBinding TargetProperty="ActualWidth" Path="AllWidth"/>
+                                        <kernel:PushBinding TargetProperty="ActualHeight" Path="AllHeight"/>
+                                    </kernel:PushBindingManager.PushBindings>
+                                </WrapPanel>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                    </ListView>
+                </ScrollViewer>
+            </Grid>
+
+
+
+            <Button Grid.Column="0"
+                    Style="{StaticResource TransparentButton}"
+                    Command="{Binding Path=MoveToLeftCommand}"
+                    Visibility="{Binding Path=CanMoveToLeft, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Image Width="30" Height="30" Source="../Images/arrowLeftNew.png"></Image>
+            </Button>
+
+            <Button Grid.Column="2" 
+                    Style="{StaticResource TransparentButton}"
+                    Command="{Binding Path=MoveToRightCommand}" 
+                    Visibility="{Binding Path=.CanMoveToRight, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Image Width="30" Height="30" Source="../Images/arrowRightNew.png"></Image>
+            </Button>
+        </Grid>
+        <Grid Grid.Row="3">
+            <Button Background="#FFFFFFFF" 
+                    Command="{Binding Path=GoNextCommand}"
+                    Height="50"
+                    Width="150"
+                    BorderBrush="#FFCECDCD"
+                    BorderThickness="2"
+                    Style="{StaticResource ImageButton}">
+                <!--<Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border BorderBrush="#FFCECDCD" CornerRadius="2" Background="White" BorderThickness="2">
+                            <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>-->
+
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0" Width="30" Height="30" Source="../Images/NextButton2.png"/>
+                    <TextBlock Grid.Column="1" FontSize="14">
+                        ДАЛЕЕ
+                    </TextBlock>
+
+                </Grid>
+            </Button>
+        </Grid>
+    </Grid>
+    </DataTemplate>
+    
+</ResourceDictionary>

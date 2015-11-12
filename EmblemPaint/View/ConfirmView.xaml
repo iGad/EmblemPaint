@@ -1,0 +1,34 @@
+﻿<Window x:Class="EmblemPaint.View.ConfirmView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        WindowState="Maximized"
+        WindowStyle="None"
+        Background="White"
+        Title="ConfirmView" Height="500" Width="900">
+    <Grid Background="#2FAAAAAA">
+        <Grid Background="#FFF2F2F2" Width="900" Height="500">
+            <Grid.RowDefinitions>
+                  <RowDefinition Height="3*"/>
+                  <RowDefinition Height="1*"/>
+                  <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Grid.ColumnSpan="2" FontSize="72" TextWrapping="Wrap">Вы уверены, что хотите выйти?</TextBlock>
+            <TextBlock Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="1" FontSize="38" TextWrapping="Wrap" FontStyle="Italic">Все данные будут потеряны.</TextBlock>
+            
+            <Button Grid.Row="2" Grid.Column="0" Click="ExitButtonClick">
+                <TextBlock Foreground="#FF909090">ВЫЙТИ</TextBlock>
+            </Button>
+            <Button Grid.Row="2" Grid.Column="1" Click="CancelButtonClick" >
+                <TextBlock Foreground="#FF909090">ОТМЕНА</TextBlock>
+            </Button>
+        </Grid>
+    </Grid>
+</Window>

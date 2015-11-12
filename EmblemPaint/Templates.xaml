@@ -1,0 +1,76 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:EmblemPaint"
+                    xmlns:kernel="clr-namespace:EmblemPaint.Kernel;assembly=EmblemPaint.Kernel">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Styles.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+    <!--<kernel:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
+    <ControlTemplate x:Key="SelectedTemplate" TargetType="ListViewItem">
+        <Border CornerRadius="5" 
+                                        BorderThickness="3" 
+                                        BorderBrush="#FFFFF9C5" 
+                                        Background="Transparent"
+                                        VerticalAlignment="Center"
+                                        >
+            <Grid VerticalAlignment="Center" Width="{Binding ElementName=Window, Path=DataContext.ItemSize}"
+                                        Height="{Binding ElementName=Window, Path=DataContext.ItemSize}"
+                                        Margin="{Binding ElementName=Window, Path=DataContext.Margin}" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Image Source="{Binding Path=(kernel:RegionViewModel.Thumbnail)}"  StretchDirection="Both"></Image>
+                <TextBlock Grid.Row="1" Style="{StaticResource ListItemTextBlock}"/>
+            </Grid>
+            
+        </Border>
+    </ControlTemplate>-->
+    <ControlTemplate x:Key="DefaultListViewItemTemplate" TargetType="ListViewItem">
+        <Border CornerRadius="5" 
+                VerticalAlignment="Center"
+                BorderThickness="3"
+                Background="Transparent"
+                Style="{StaticResource RegionListItemBorderStyle}">
+            <!--<Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=(kernel:ListViewItemModel.IsSelected)}" Value="True">
+                            <Setter Property="BorderBrush" Value="#FFFFF9C5"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>-->
+            <Grid VerticalAlignment="Center" Width="{Binding ElementName=ScrollViewer, Path=DataContext.ItemSize}"
+                                        Height="{Binding ElementName=ScrollViewer, Path=DataContext.ItemSize}"
+                                        Margin="{Binding ElementName=ScrollViewer, Path=DataContext.Margin}" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Image Source="{Binding Path=(kernel:ListViewItemModel.Thumbnail)}" StretchDirection="Both"></Image>
+                <TextBlock Grid.Row="1" Style="{StaticResource ListItemTextBlock}"/>
+            </Grid>
+        </Border>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ColorListViewItemTemplate" TargetType="ListViewItem">
+        <Border CornerRadius="5" 
+                VerticalAlignment="Center"
+                BorderThickness="3"
+                Background="Transparent"
+                Style="{StaticResource ColorListItemBorderStyle}">
+            <Grid VerticalAlignment="Center" Width="80"
+                                        Height="50"
+                                        Margin="5" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Image Source="{Binding Path=(kernel:ListViewItemModel.Thumbnail)}" StretchDirection="Both"></Image>
+                <TextBlock Grid.Row="1" Style="{StaticResource ListItemTextBlock}"/>
+            </Grid>
+        </Border>
+    </ControlTemplate>
+</ResourceDictionary>
