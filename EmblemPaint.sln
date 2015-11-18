@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigGenerator", "ConfigGe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KernelTests", "KernelTests\KernelTests.csproj", "{9074EE18-149F-4770-A18C-C252E5C8569E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmblemPaintTests", "EmblemPaintTests\EmblemPaintTests.csproj", "{383F5483-5357-41F8-8D9B-14B83E06CC5F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{9074EE18-149F-4770-A18C-C252E5C8569E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9074EE18-149F-4770-A18C-C252E5C8569E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9074EE18-149F-4770-A18C-C252E5C8569E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{383F5483-5357-41F8-8D9B-14B83E06CC5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{383F5483-5357-41F8-8D9B-14B83E06CC5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{383F5483-5357-41F8-8D9B-14B83E06CC5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{383F5483-5357-41F8-8D9B-14B83E06CC5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

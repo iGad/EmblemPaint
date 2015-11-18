@@ -1,35 +1,75 @@
 ﻿using System;
+using System.Timers;
+using System.Windows;
 using EmblemPaint.Kernel;
+using EmblemPaint.View;
 
 namespace EmblemPaint.ViewModel
 {
-    public class WindowDispatcher:Kernel.ViewModel
+    public class WindowDispatcher: FunctionalViewModel
     {
-        private Kernel.ViewModel activeModel;
+        private double windowHeight, windowWidth;
+        private readonly Timer timer;
+        private FunctionalViewModel activeModel;
         private readonly ScreensaverViewModel screensaverViewModel;
         private readonly SelectRegionViewModel selectRegionViewModel;
-        private RegionsStorage storage;
 
-        public WindowDispatcher(RegionsStorage storage)
+        public WindowDispatcher(Configuration configuration):base(configuration)
         {
-            this.storage = storage;
-            this.screensaverViewModel = new ScreensaverViewModel();
-            this.selectRegionViewModel = new SelectRegionViewModel(storage.Regions);
+            Configuration = configuration;
+            WindowHeight = configuration.WindowHeight;
+            WindowWidth = configuration.WindowWidth;
+            this.timer = new Timer(configuration.WaitUserActionInterval * 1000);
+            this.timer.Elapsed += OnTimerElapsed;
+            this.screensaverViewModel = new ScreensaverViewModel(configuration);
+            this.selectRegionViewModel = new SelectRegionViewModel(configuration);
             Subscribe();
             ActiveModel = this.screensaverViewModel;
         }
-        
 
-        public Kernel.ViewModel ActiveModel
+        #region Properties
+
+        public FunctionalViewModel ActiveModel
         {
             get { return this.activeModel; }
             set
             {
                 this.activeModel = value;
+                if (this.activeModel != this.screensaverViewModel)
+                {
+                    ResetTimer();
+                }
                 OnPropertyChanged(nameof(ActiveModel));
             }
         }
 
+        public double WindowHeight
+        {
+            get { return this.windowHeight; }
+            set
+            {
+                if (!this.windowHeight.Equals(value))
+                {
+                    this.windowHeight = value;
+                    OnPropertyChanged(nameof(WindowHeight));
+                }
+            }
+        }
+
+        public double WindowWidth
+        {
+            get { return this.windowWidth; }
+            set
+            {
+                if (!this.windowWidth.Equals(value))
+                {
+                    this.windowWidth = value;
+                    OnPropertyChanged(nameof(WindowWidth));
+                }
+            }
+        }
+
+        #endregion
 
         private void Subscribe()
         {
@@ -37,6 +77,8 @@ namespace EmblemPaint.ViewModel
             this.selectRegionViewModel.HomeCommandExecuted += ViewModelOnHomeCommandExecuted;
             this.selectRegionViewModel.NextCommandExecuted += SelectRegionViewModelOnNextCommandExecuted;
         }
+
+        #region Event handlers
 
         #region Screensaver
 
@@ -51,7 +93,7 @@ namespace EmblemPaint.ViewModel
 
         private void SelectRegionViewModelOnNextCommandExecuted(object sender, EventArgs eventArgs)
         {
-            var paintViewModel = new PaintViewModel(this.selectRegionViewModel.SelectedRegion.Region);
+            var paintViewModel = new PaintViewModel(Configuration);
             SubscribeToPaintViewModel(paintViewModel);
             ActiveModel = paintViewModel;
         }
@@ -90,8 +132,7 @@ namespace EmblemPaint.ViewModel
             var paintViewModel = sender as PaintViewModel;
             if (paintViewModel != null)
             {
-                var resultViewModel = new ResultViewModel(paintViewModel.RegionSymbol, paintViewModel.SourceImage, 99);
-                //TODO: получение процентов
+                var resultViewModel = new ResultViewModel(paintViewModel.RegionSymbol, paintViewModel.SourceImage, paintViewModel.CalculateFillAccuracy(), Configuration);
                 resultViewModel.HomeCommandExecuted += ViewModelOnHomeCommandExecuted;
                 resultViewModel.Disposing += ResultViewModelOnDisposing;
                 paintViewModel.Dispose();
@@ -101,9 +142,12 @@ namespace EmblemPaint.ViewModel
 
         private void PaintViewModelOnBackCommandExecuted(object sender, EventArgs eventArgs)
         {
-            var paintViewModel = sender as Kernel.ViewModel;
-            paintViewModel?.Dispose();
-            ActiveModel = this.selectRegionViewModel;
+            if (AskUserConfirmation(true))
+            {
+                var paintViewModel = sender as Kernel.ViewModel;
+                paintViewModel?.Dispose();
+                ActiveModel = this.selectRegionViewModel;
+            }
         }
 
         #endregion
@@ -122,15 +166,67 @@ namespace EmblemPaint.ViewModel
 
         #endregion
 
-        private void ViewModelOnHomeCommandExecuted(object sender, EventArgs eventArgs)
+        private bool AskUserConfirmation(bool needAsking)
         {
-            var resultViewModel = sender as Kernel.ViewModel;
-            if (resultViewModel != this.selectRegionViewModel)
+            if (needAsking)
             {
-                resultViewModel?.Dispose();
+                var askUserView = new ConfirmView {Owner = Application.Current.MainWindow};
+                return askUserView.ShowDialog() ?? false;
             }
-            ActiveModel = this.screensaverViewModel;
+            return true;
         }
-        
+
+        private void ViewModelOnHomeCommandExecuted(object sender, EventArgs<bool> eventArgs)
+        {
+            
+            if (AskUserConfirmation(eventArgs.Parameter))
+            {
+                var resultViewModel = sender as Kernel.ViewModel;
+                if (resultViewModel != this.selectRegionViewModel)
+                {
+                    resultViewModel?.Dispose();
+                }
+                ActiveModel = this.screensaverViewModel;
+            }
+        }
+
+        private void OnTimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            this.timer.Stop();
+            bool result = false;
+            Application.Current.Dispatcher.Invoke(() => result = WaitUserAction());
+            if (result)
+            {
+                Application.Current.Dispatcher.Invoke(() => ActiveModel.HomeCommand.Execute(false));
+            }
+            else
+            {
+                this.timer.Start();
+            }
+        }
+
+        private bool WaitUserAction()
+        {
+            PleaseReturnView view = new PleaseReturnView();
+            view.ShowDialog();
+            var dialogResult = view.DialogResult;
+            return (dialogResult.HasValue && dialogResult.Value);
+        }
+
+        public void ResetTimer()
+        {
+            this.timer.Stop();
+            this.timer.Start();
+        }
+
+        protected override void OnActionHappened()
+        {
+            if (this.timer.Enabled)
+            {
+                ResetTimer();
+            }
+        }
+
+        #endregion
     }
 }

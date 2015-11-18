@@ -1,143 +1,166 @@
 using System;
-using System.Timers;
 using System.Windows;
+using EmblemPaint.Kernel;
 using Microsoft.Practices.Prism.Commands;
 
 namespace EmblemPaint.ViewModel
 {
     public abstract class FunctionalViewModel : Kernel.ViewModel
     {
-        private readonly Timer timer;
-        protected FunctionalViewModel()
+
+        protected FunctionalViewModel(Configuration configuration)
         {
-            this.timer = new Timer(2*5*1000);
-            this.timer.Elapsed += OnTimerElapsed;
-            HomeCommand = new DelegateCommand<bool?>(Home);
+            Configuration = configuration;
             BackCommand = new DelegateCommand(Back);
-            GoNextCommand = new DelegateCommand(GoNext, CanExecuteGoNext);
-            GoBackCommand = new DelegateCommand<object>(GoBack,CanExecuteGoBack);
-            CloseCommand = new DelegateCommand<Window>(Close);
+            NextCommand = new DelegateCommand(Next, CanExecuteNextCommand);
+            HomeCommand = new DelegateCommand<bool?>(Home);
+            ActionCommand = new DelegateCommand<EventInformation<RoutedEventArgs>>(Action);
+            ActionHappened += OnActionHappened;
         }
 
-        
+        protected Configuration Configuration { get; set; }
 
-        private void OnTimerElapsed(object sender, ElapsedEventArgs e)
+        #region Commands
+
+        /// <summary>
+        /// Команда, выполняющаяся при каких-либо действиях пользователя
+        /// </summary>
+        public DelegateCommand<EventInformation<RoutedEventArgs>> ActionCommand { get; }
+
+        /// <summary>
+        /// Действие, которое выполняется при взаимодействии пользователя с окном
+        /// </summary>
+        /// <param name="e">Аргументы события</param>
+        protected virtual void Action(EventInformation<RoutedEventArgs> e)
         {
-            StopTimer();
-            bool result = false;
-            Application.Current.Dispatcher.Invoke(() => result = WaitUserAction());
-            if (result)
-            {
-                Application.Current.Dispatcher.Invoke(() => Home(false));
-            }
-            else
-            {
-                StartTimer();
-            }
+            var handler = ActionHappened;
+            handler?.Invoke(this, EventArgs.Empty);
         }
 
-        private bool WaitUserAction()
-        {
-            View.PleaseReturnView view = new View.PleaseReturnView();
-            var dialogResult = view.ShowDialog();
-            return (dialogResult.HasValue && dialogResult.Value);
-        }
+        /// <summary>
+        /// Команда возврата к домашнему окну
+        /// </summary>
+        public DelegateCommand<bool?> HomeCommand { get; }
 
-        public void ResetTimer()
-        {
-            StopTimer();
-            StartTimer();
-        }
-
-        protected void StopTimer()
-        {
-            this.timer.Stop();
-        }
-
-        protected void StartTimer()
-        {
-            this.timer.Start();
-        }
-
-        protected override void OnActionHappened()
-        {
-            if (this.timer.Enabled)
-            {
-                ResetTimer();
-            }
-        }
-
-        public WindowStartupLocation StartupLocation { get; } = WindowStartupLocation.Manual;
-
-        public DelegateCommand GoNextCommand { get; }
-
-        public DelegateCommand<object> GoBackCommand { get; }
-
-        public DelegateCommand BackCommand { get; }
-
-        public event EventHandler BackCommandExecuted;
-
-        public DelegateCommand<Window> CloseCommand { get; }
-
-        public DelegateCommand<bool?> HomeCommand { get; protected set; }
-
-        public Window ScreensaverWindow { get; protected set; }
-
-        public event EventHandler HomeCommandExecuted;
-
-        public event EventHandler Closing;
-
+        /// <summary>
+        /// Действия команды возврата к домашнему окну
+        /// </summary>
+        /// <param name="askUser">Требуется ли подтверждение пользователя</param>
         protected virtual void Home(bool? askUser)
         {
-            RaiseHomeCommandExecuted();
+            RaiseHomeCommandExecuted(askUser ?? false);
         }
 
-        protected void RaiseHomeCommandExecuted()
+        /// <summary>
+        /// Команда перехода к следующему окну
+        /// </summary>
+        public DelegateCommand NextCommand { get; }
+
+        /// <summary>
+        /// Действие перехода к следующему окну
+        /// </summary>
+        protected virtual void Next()
         {
-            var handle = HomeCommandExecuted;
-            handle?.Invoke(this, EventArgs.Empty);
+            RaiseNextCommandExecuted();
         }
 
-        protected void RaiseClosing()
+        /// <summary>
+        /// Доступна ли команда NextCommand
+        /// </summary>
+        /// <returns></returns>
+        protected virtual bool CanExecuteNextCommand()
         {
-            var handle = Closing;
-            handle?.Invoke(this, EventArgs.Empty);
+            return true;
         }
 
+        /// <summary>
+        /// Команда возврата на предыдущее окно
+        /// </summary>
+        public DelegateCommand BackCommand { get; }
+
+        /// <summary>
+        /// Действие перехода на предыдущее окно
+        /// </summary>
         protected virtual void Back()
         {
             RaiseBackCommandExecuted();
         }
 
+        #endregion
+
+        #region EventHandlers
+
+        /// <summary>
+        /// Событие, сообщающее о том, что выполнена команда Next
+        /// </summary>
+        public event EventHandler NextCommandExecuted;
+
+        /// <summary>
+        /// Событие, сообщающее о том, что выполнена команда Back
+        /// </summary>
+        public event EventHandler BackCommandExecuted;
+
+        /// <summary>
+        /// Событие, сообщающее о том, что выполнена команда Home
+        /// </summary>
+        public event EventHandler<EventArgs<bool>> HomeCommandExecuted;
+
+        /// <summary>
+        /// Событие, сообщающее о том, что пользователь совершил какое-либо действие с вьюшкой
+        /// </summary>
+        public event EventHandler ActionHappened;
+
+        /// <summary>
+        /// Сгенерировать событие NextCommandExecuted
+        /// </summary>
+        protected void RaiseNextCommandExecuted()
+        {
+            var handler = NextCommandExecuted;
+            handler?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnActionHappened(object sender, EventArgs e)
+        {
+            OnActionHappened();
+        }
+
+        /// <summary>
+        /// Сгенерировать событие HomeCommandExecuted
+        /// </summary>
+        protected void RaiseHomeCommandExecuted(bool askUser)
+        {
+            var handle = HomeCommandExecuted;
+
+            handle?.Invoke(this, new EventArgs<bool>(askUser));
+        }
+        
+
+        protected virtual void OnActionHappened()
+        {
+        }
+
+        
+
+        /// <summary>
+        /// Сгенерировать событие BackCommandExecuted
+        /// </summary>
         protected void RaiseBackCommandExecuted()
         {
             var handler = BackCommandExecuted;
             handler?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual bool CanExecuteGoNext()
+        #endregion
+
+
+        #region Methods
+
+        public virtual void Reconfigure(Configuration newConfig)
         {
-            return true;
+            Configuration = newConfig;
         }
 
-        protected virtual void GoNext()
-        {
-        }
+        #endregion
 
-        protected virtual bool CanExecuteGoBack(object parameter)
-        {
-            return true;
-        }
-
-        protected virtual void GoBack(object parameter)
-        {
-            
-        }
-
-        protected virtual void Close(Window window)
-        {
-            RaiseClosing();
-            window?.Close();
-        }
     }
 }

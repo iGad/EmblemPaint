@@ -5,52 +5,22 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Styles.xaml"/>
     </ResourceDictionary.MergedDictionaries>
-    <!--<kernel:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
-    <ControlTemplate x:Key="SelectedTemplate" TargetType="ListViewItem">
-        <Border CornerRadius="5" 
-                                        BorderThickness="3" 
-                                        BorderBrush="#FFFFF9C5" 
-                                        Background="Transparent"
-                                        VerticalAlignment="Center"
-                                        >
-            <Grid VerticalAlignment="Center" Width="{Binding ElementName=Window, Path=DataContext.ItemSize}"
-                                        Height="{Binding ElementName=Window, Path=DataContext.ItemSize}"
-                                        Margin="{Binding ElementName=Window, Path=DataContext.Margin}" >
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="4*"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
-                <Image Source="{Binding Path=(kernel:RegionViewModel.Thumbnail)}"  StretchDirection="Both"></Image>
-                <TextBlock Grid.Row="1" Style="{StaticResource ListItemTextBlock}"/>
-            </Grid>
-            
-        </Border>
-    </ControlTemplate>-->
     <ControlTemplate x:Key="DefaultListViewItemTemplate" TargetType="ListViewItem">
         <Border CornerRadius="5" 
                 VerticalAlignment="Center"
                 BorderThickness="3"
                 Background="Transparent"
-                Style="{StaticResource RegionListItemBorderStyle}">
-            <!--<Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="BorderBrush" Value="Transparent"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Path=(kernel:ListViewItemModel.IsSelected)}" Value="True">
-                            <Setter Property="BorderBrush" Value="#FFFFF9C5"></Setter>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>-->
-            <Grid VerticalAlignment="Center" Width="{Binding ElementName=ScrollViewer, Path=DataContext.ItemSize}"
-                                        Height="{Binding ElementName=ScrollViewer, Path=DataContext.ItemSize}"
-                                        Margin="{Binding ElementName=ScrollViewer, Path=DataContext.Margin}" >
+                Style="{StaticResource RegionListItemBorderStyle}"
+                 Margin="{Binding ElementName=ScrollViewer, Path=DataContext.Margin}" >
+            <Grid VerticalAlignment="Center" Width="{Binding ElementName=ScrollViewer, Path=DataContext.ItemWidth}"
+                                        Height="{Binding ElementName=ScrollViewer, Path=DataContext.ItemHeight}"
+                                        Margin="0,5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="4*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
-                <Image Source="{Binding Path=(kernel:ListViewItemModel.Thumbnail)}" StretchDirection="Both"></Image>
-                <TextBlock Grid.Row="1" Style="{StaticResource ListItemTextBlock}"/>
+                <Image Source="{Binding Path=(kernel:ListViewItemModel.Thumbnail)}" StretchDirection="Both" Stretch="Uniform"></Image>
+                <TextBlock Grid.Row="1" FontSize="14" Style="{StaticResource ListItemTextBlock}"/>
             </Grid>
         </Border>
     </ControlTemplate>
@@ -73,4 +43,48 @@
             </Grid>
         </Border>
     </ControlTemplate>
+
+    <ControlTemplate TargetType="Button" x:Key="ButtonTemplate">
+        <Border BorderThickness="1" BorderBrush="#FFA1A1A1" CornerRadius="10">
+            <ContentPresenter Content="{Binding}">
+            </ContentPresenter>
+        </Border>
+    </ControlTemplate>
+
+    <Grid x:Key="NextButtonGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        <Image Grid.Column="0"  Margin="5,5" Source="Images/NextButton2.png"/>
+
+        <TextBlock Grid.Column="1" FontSize="18">
+                        ДАЛЕЕ
+        </TextBlock>
+    </Grid>
+
+    <Grid x:Key="CompleteButtonGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        <Image Grid.Column="0"  Margin="5,5" Source="Images/NextButton2.png"/>
+
+        <TextBlock Grid.Column="1" FontSize="18">
+                        ГОТОВО
+        </TextBlock>
+    </Grid>
+
+    <Grid x:Key="BackButtonGrid" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Image Grid.Column="0" Width="30" Height="30" Source="Images/GoBackArrow.png"/>
+        <TextBlock Grid.Column="1" FontSize="14" TextWrapping="WrapWithOverflow">
+                        ВЫБРАТЬ ДРУГОЙ ГЕРБ
+        </TextBlock>
+
+    </Grid>
+   
 </ResourceDictionary>

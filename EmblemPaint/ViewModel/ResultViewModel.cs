@@ -1,14 +1,17 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System;
+using System.Windows.Media.Imaging;
 
 namespace EmblemPaint.ViewModel
 {
     public class ResultViewModel:FunctionalViewModel  
     {
-        public ResultViewModel(BitmapSource resultImage, BitmapSource sourceImage, int resultPercents)
+        public ResultViewModel(BitmapSource resultImage, BitmapSource sourceImage, int resultPercents, Configuration configuration):base(configuration)
         {
             ResultImage = resultImage;
             SourceImage = sourceImage;
             Result = resultPercents + "%";
+            FillingAngle = resultPercents*Math.PI/50;
+            StartAngle = Math.PI + (2*Math.PI - FillingAngle);
         }
 
         /// <summary>
@@ -30,15 +33,10 @@ namespace EmblemPaint.ViewModel
         /// Сообщение пользователю
         /// </summary>
         public string Congratulation { get; }
+        
+        public double StartAngle { get; }
 
-        #region Overrides
+        public double FillingAngle { get; }
 
-        //protected override void Home(bool? askUser)
-        //{
-        //    var window = parameter as Window;
-        //    window?.Close();
-        //}
-
-        #endregion
     }
 }

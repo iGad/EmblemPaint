@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:kernel="clr-namespace:EmblemPaint.Kernel;assembly=EmblemPaint.Kernel"
              mc:Ignorable="d" 
              Name="PieWindow"
              Margin="1"
@@ -33,7 +32,7 @@
     </UserControl.Triggers>
     <Grid Width="110" Height="110">
         <Grid.Resources>
-            <SolidColorBrush x:Key="StrokeBrush" Color="Black"/><!--{x:Static kernel:Constants.BorderColor}-->
+            <SolidColorBrush x:Key="StrokeBrush" Color="#FFB3B3B3"/>
         </Grid.Resources>
         <Path x:Name="BackEllipse" 
               Stroke="{StaticResource StrokeBrush}"

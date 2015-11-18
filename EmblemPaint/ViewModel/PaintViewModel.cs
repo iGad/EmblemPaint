@@ -20,16 +20,16 @@ namespace EmblemPaint.ViewModel
         private ColorViewModel selectedColorViewModel;
         private double imageWidth, imageHeight;
 
-        public PaintViewModel(Region region)
+        public PaintViewModel(Configuration configuration):base(configuration)
         {
             MouseDownCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(OnMouseDown);
-            this.region = region;
-            this.sourceImage = Utilities.GetImageFromFile(region.SourceImageName);
-            var symbolImage = Utilities.GetImageFromFile(region.PatternImageName);
+            this.region = configuration.SelectedRegion;
+            this.sourceImage = Utilities.GetImageFromFile(this.region.SourceImageName);
+            var symbolImage = Utilities.GetImageFromFile(this.region.PatternImageName);
             this.regionSymbol = new WriteableBitmap(symbolImage);
             this.painter = new Painter(this.regionSymbol, this.sourceImage);
+            Colors = GetColors();
             Colors.First().IsSelected = true;
-            StartTimer();
             //TODO: Проверка на равенство размеров изображений и соответствующие действия
         }
 
@@ -93,7 +93,7 @@ namespace EmblemPaint.ViewModel
             }
         }
 
-        public ObservableCollection<ColorViewModel> Colors { get; } = GetColors();
+        public ObservableCollection<ColorViewModel> Colors { get; } 
 
         public DelegateCommand<EventInformation<MouseEventArgs>> MouseDownCommand { get; }
 
@@ -113,88 +113,63 @@ namespace EmblemPaint.ViewModel
             }
         }
 
-        private static ObservableCollection<ColorViewModel> GetColors()
+        public int CalculateFillAccuracy()
         {
-            List<ColorViewModel> collection = new List<ColorViewModel>(Constants.DefaultColors.Count);
-            collection.AddRange(Constants.DefaultColors.Select(CreateViewModel));
+            return this.painter.CalculateFillAccuracy();
+        }
 
+        private ObservableCollection<ColorViewModel> GetColors()
+        {
+            return GetColors(Configuration.Colors.Any() ? Configuration.Colors : Constants.DefaultColors.ToList());
+        }
+
+        private ObservableCollection<ColorViewModel> GetColors(IList<FillingColor> fillingColors)
+        {
+            List<ColorViewModel> collection = new List<ColorViewModel>(fillingColors.Count);
+            collection.AddRange(fillingColors.Select(LoadColor));
             return new ObservableCollection<ColorViewModel>(collection);
         }
 
-        private static ColorViewModel CreateViewModel(FillingColor fillingColor)
+        private ObservableCollection<ColorViewModel> LoadConfigurationColors()
         {
-            BitmapSource thumbnail = Utilities.GetImageFromFile(Constants.DefaultBrushesDirectoryName + "\\"+fillingColor.ThumbnailName);
-            if(thumbnail.CanFreeze)
-            {
-                thumbnail.Freeze();
-            }
-            return new ColorViewModel(fillingColor.Color) {Thumbnail = thumbnail};
+            List<ColorViewModel> collection = new List<ColorViewModel>(Configuration.Colors.Count);
+            collection.AddRange(Configuration.Colors.Select(LoadColor));
+            return new ObservableCollection<ColorViewModel>(collection);
         }
 
-        protected override void GoNext()
+        private ColorViewModel LoadColor(FillingColor fillingColor)
         {
-            StopTimer();
-            var percent = this.painter.CalculateMatchesPercent();
-            var resultViewModel = new ResultViewModel(RegionSymbol, SourceImage, percent);
-            var resultView = new View.ResultView(resultViewModel);
-            resultView.Closed += ResultViewOnClosed;
-            resultViewModel.HomeCommandExecuted += (o, e) => resultView.Close();
-            resultView.ShowDialog();
+            var image = Utilities.GetImageFromFile(fillingColor.PathToImage);
+            if (image.CanFreeze)
+            {
+                image.Freeze();
+            }
+            return new ColorViewModel(fillingColor.GetColor()) {Thumbnail = image};
         }
 
-        private void ResultViewOnClosed(object sender, EventArgs eventArgs)
-        {
-            var resultView = sender as View.ResultView;
-            if (resultView != null)
-            {
-                resultView.Closed -= ResultViewOnClosed;
-                Home(false);
-            }
-        }
+        //private ObservableCollection<ColorViewModel> LoadDefaultColors()
+        //{
+        //    List<ColorViewModel> collection = new List<ColorViewModel>(Constants.DefaultColors.Count);
+        //    collection.AddRange(Constants.DefaultColors.Select(CreateViewModel));
 
-        protected override void Home(bool? askUser)
-        {
-            if (askUser.HasValue && askUser.Value)
-            {
-                if (AskUserAboutGoBack())
-                {
-                    StopTimer();
-                    RaiseHomeCommandExecuted();
-                }
-                else
-                {
-                    ResetTimer();
-                }
-            }
-            else
-            {
-                RaiseHomeCommandExecuted();
-            }
-        }
+        //    return new ObservableCollection<ColorViewModel>(collection);
+        //}
 
-        private bool AskUserAboutGoBack()
-        {
-            View.ConfirmView confirmView = new View.ConfirmView();
-            var dialogResult = confirmView.ShowDialog();
-            if (dialogResult != null && dialogResult.Value)
-            {
-                return true;
-            }
-            return false;
-        }
+        //private static ColorViewModel CreateViewModel(FillingColor fillingColor)
+        //{
+        //    BitmapSource thumbnail = Utilities.GetImageFromFile(Constants.DefaultBrushesDirectoryName + "\\"+fillingColor.ThumbnailName);
+        //    if(thumbnail.CanFreeze)
+        //    {
+        //        thumbnail.Freeze();
+        //    }
+        //    return new ColorViewModel(fillingColor.Color) {Thumbnail = thumbnail};
+        //}
 
-        protected override void GoBack(object parameter)
-        {
-           
-        }
 
-        protected override void Close(Window window)
+        protected override void Next()
         {
-            if (AskUserAboutGoBack())
-            {
-                StopTimer();
-                window?.Close();
-            }
+            Configuration.Painter = this.painter;
+            base.Next();
         }
 
         protected override void DoDispose()

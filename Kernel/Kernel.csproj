@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EmblemPaint.Kernel</RootNamespace>
     <AssemblyName>EmblemPaint.Kernel</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -100,11 +100,12 @@
     <Compile Include="ColorExtensions.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DoubleToIntValueConverter.cs" />
+    <Compile Include="EventArgs.cs" />
     <Compile Include="EventToCommandMaps.cs" />
-    <Compile Include="FillingColor.cs" />
     <Compile Include="FreezableBinding.cs" />
     <Compile Include="LinqToVisualTree.cs" />
     <Compile Include="ListViewItemModel.cs" />
+    <Compile Include="FillingColor.cs" />
     <Compile Include="Painter.cs" />
     <Compile Include="Pie.cs" />
     <Compile Include="PieView.xaml.cs">

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using EmblemPaint.Kernel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -10,6 +6,12 @@ namespace KernelTests
 {
     public static class TestHelper
     {
+        public static string TestRegionFolder => "TestFiles";
+
+        public static string TestBrushFolder => "TestBrushes";
+
+        public static string TestDirectory => Environment.CurrentDirectory;
+
         public static RegionSuffixRegexes CreateTestsRegionSuffixRegexes()
         {
             return new RegionSuffixRegexes('_', "thumb", "ideal", "pattern");
@@ -34,7 +36,7 @@ namespace KernelTests
         {
             try
             {
-                action.Invoke();
+                action();
             }
             catch (TException)
             {

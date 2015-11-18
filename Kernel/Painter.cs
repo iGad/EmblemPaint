@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -23,10 +20,11 @@ namespace EmblemPaint.Kernel
             this.sourceWidth = sourceImage.PixelWidth;
             this.sourceHeight = sourceImage.PixelHeight;
             this.stride = this.sourceWidth*BytesPerPixel;
-            this.sourceImageBytes = new byte[this.sourceHeight*this.stride];
-            sourceImage.CopyPixels(this.sourceImageBytes, this.stride, 0);
-            this.patternImageBytes = new byte[this.sourceHeight * this.stride];
-            patternImage.CopyPixels(this.patternImageBytes, this.stride, 0);
+            this.sourceImageBytes = sourceImage.GetBytes();
+            //new byte[this.sourceHeight*this.stride];
+            //sourceImage.CopyPixels(this.sourceImageBytes, this.stride, 0);
+            this.patternImageBytes = patternImage.GetBytes();//new byte[this.sourceHeight * this.stride];
+            //patternImage.CopyPixels(this.patternImageBytes, this.stride, 0);
         }
 
         public WriteableBitmap PatternImage
@@ -134,18 +132,7 @@ namespace EmblemPaint.Kernel
             Parallel.For(0, this.sourceHeight, po, i => FillLine(i, defaultColor,fillingColor));
         }
         
-
-        private void DrawLine(int index, Color defaultColor, Color fillingColor)
-        {
-            FillLine(index, defaultColor, fillingColor);
-        }
-
-        private byte[] GetSourceLine(int index)
-        {
-            byte[] result = new byte[this.stride];
-            Array.Copy(this.sourceImageBytes, this.stride*index, result, 0, this.stride);
-            return result;
-        }
+        
 
         private void FillLine(int index, Color defaultColor, Color fillingColor)
         {
@@ -166,7 +153,7 @@ namespace EmblemPaint.Kernel
             pixels[index + 3] = color.A;
         }
 
-        public int CalculateMatchesPercent()
+        public int CalculateFillAccuracy()
         {
             int colorPixelCount = 0;
             int matchColorPixelCount = 0;
@@ -190,15 +177,18 @@ namespace EmblemPaint.Kernel
             return (this.sourceImageBytes[sourceImagePixelIndex] <= 250 ||
                    this.sourceImageBytes[sourceImagePixelIndex + 1] <= 250 ||
                    this.sourceImageBytes[sourceImagePixelIndex + 2] <= 250) &&
-                   this.sourceImageBytes[sourceImagePixelIndex + 3] > 0;
+                   this.sourceImageBytes[sourceImagePixelIndex + 3] > 0 &&
+                   this.sourceImageBytes[sourceImagePixelIndex] > 0 &&
+                   this.sourceImageBytes[sourceImagePixelIndex + 1] > 0 &&
+                   this.sourceImageBytes[sourceImagePixelIndex + 2] > 0;
         }
 
         private bool IsPixelsEquals(int pixelIndex)
         {
-            return this.sourceImageBytes[pixelIndex] - this.sourceImageBytes[pixelIndex] <= 5 &&
-                   this.sourceImageBytes[pixelIndex + 1] - this.sourceImageBytes[pixelIndex + 1] <= 5 &&
-                   this.sourceImageBytes[pixelIndex + 2] - this.sourceImageBytes[pixelIndex + 2] <= 5 &&
-                   this.sourceImageBytes[pixelIndex + 3] - this.sourceImageBytes[pixelIndex + 3] <= 5;
+            return Math.Abs(this.sourceImageBytes[pixelIndex] - this.patternImageBytes[pixelIndex]) <= 5 &&
+                   Math.Abs(this.sourceImageBytes[pixelIndex + 1] - this.patternImageBytes[pixelIndex + 1]) <= 5 &&
+                   Math.Abs(this.sourceImageBytes[pixelIndex + 2] - this.patternImageBytes[pixelIndex + 2]) <= 5 &&
+                   Math.Abs(this.sourceImageBytes[pixelIndex + 3] - this.patternImageBytes[pixelIndex + 3]) <= 5;
         }
     }
 }

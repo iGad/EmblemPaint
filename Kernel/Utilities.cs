@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Xceed.Wpf.DataGrid.Views;
 
 namespace EmblemPaint.Kernel
 {
@@ -19,7 +14,7 @@ namespace EmblemPaint.Kernel
             Stream stream;
             if (File.Exists(path))
             {
-                stream = new FileStream(path, FileMode.Open);
+                stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
             else
             {
@@ -33,5 +28,28 @@ namespace EmblemPaint.Kernel
             bitmap.EndInit();
             return bitmap;
         }
+
+        public static IEnumerable<string> GetFilesName(string directory, string searchPattern)
+        {
+            if (directory == null || !Directory.Exists(directory) || string.IsNullOrWhiteSpace(searchPattern))
+            {
+                throw new ArgumentException("Invalid argument. Directory does not exest or parameter is null");
+            }
+            DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+            var fileInfos = directoryInfo.GetFiles(searchPattern);
+            return fileInfos.Select(file => file.Name).ToList();
+        }
+
+        public static IEnumerable<string> GetFilesFullName(string directory, string searchPattern)
+        {
+            if (directory == null || !Directory.Exists(directory) || string.IsNullOrWhiteSpace(searchPattern))
+            {
+                throw new ArgumentException("Invalid argument. Directory does not exest or parameter is null");
+            }
+            DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+            var fileInfos = directoryInfo.GetFiles(searchPattern);
+            return fileInfos.Select(file => file.FullName).ToList();
+        }
+
     }
 }

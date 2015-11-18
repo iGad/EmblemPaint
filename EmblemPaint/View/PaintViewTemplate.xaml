@@ -5,11 +5,6 @@
                     xmlns:kernel="clr-namespace:EmblemPaint.Kernel;assembly=EmblemPaint.Kernel">
     <DataTemplate DataType="{x:Type viewModel:PaintViewModel}">
         <Grid>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseMove">
-                    <kernel:RoutedEventToCommandMap Command="{Binding Path=ActionCommand}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
             <Grid.Resources>
                 <kernel:DoubleToIntValueConverter x:Key="DoubleToIntValueConverter"/>
             </Grid.Resources>
@@ -21,17 +16,7 @@
             </Grid.RowDefinitions>
             <DockPanel Grid.Row="0" >
                 <Grid  Width="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ActualHeight}">
-                    <Button  BorderBrush="#FFB4B4B4" Command="{Binding Path=HomeCommand}" 
-                         BorderThickness="0"
-                         Width="{Binding RelativeSource={RelativeSource Self}, Path=Height}"
-                         Height="{Binding RelativeSource={RelativeSource Mode=PreviousData}, Path=ActualHeight}">
-                        <!--CommandParameter="{Binding ElementName=PaintWindow}"-->
-                        <Image Source="../Images/Home.png" 
-                           VerticalAlignment="Center" 
-                           HorizontalAlignment="Center"
-                           Margin="20"/>
-
-                    </Button>
+                    <Button Style="{StaticResource HomeButton}"  CommandParameter="{StaticResource True}"/> 
                 </Grid>
                 <Grid Background="#FF979797">
 
@@ -97,46 +82,16 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Background="#FFFFFFFF" 
-                    Command="{Binding Path=CloseCommand}"
-                    CommandParameter="{Binding ElementName=PaintWindow}"
+                <Button Grid.Column="0" 
+                    Command="{Binding Path=BackCommand}"
                     Height="50"
                     Width="150"
-                    BorderBrush="#FFCECDCD"
-                    BorderThickness="2"
-                    Style="{StaticResource ImageButton}">
-                    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="3*"/>
-                        </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0" Width="30" Height="30" Source="../Images/GoBackArrow.png"/>
-                        <TextBlock Grid.Column="1" FontSize="14" TextWrapping="WrapWithOverflow">
-                        ВЫБРАТЬ ДРУГОЙ ГЕРБ
-                        </TextBlock>
-
-                    </Grid>
-                </Button>
-                <Button Grid.Column="1" Background="#FFFFFFFF" 
-                    Command="{Binding Path=GoNextCommand}"
-                    Height="50"
-                    Width="150"
-                    BorderBrush="#FFCECDCD"
-                    BorderThickness="2"
-                    Style="{StaticResource ImageButton}">
-                    <Grid Width="140">
-                        <!--VerticalAlignment="Center" HorizontalAlignment="Center"-->
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="2*"/>
-                        </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0" Width="30" Height="30" Source="../Images/NextButton2.png"/>
-                        <TextBlock Grid.Column="1" FontSize="14">
-                        ГОТОВО
-                        </TextBlock>
-
-                    </Grid>
-                </Button>
+                    Content="{StaticResource BackButtonGrid}"/>
+                <Button Grid.Column="1"
+                        Command="{Binding Path=NextCommand}" 
+                        Height="50"
+                        Width="150"
+                        Content="{StaticResource CompleteButtonGrid}"/>
 
             </Grid>
         </Grid>

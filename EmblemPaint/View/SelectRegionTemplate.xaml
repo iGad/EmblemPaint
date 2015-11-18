@@ -5,16 +5,11 @@
                     xmlns:viewModel="clr-namespace:EmblemPaint.ViewModel">
     <DataTemplate DataType="{x:Type viewModel:SelectRegionViewModel}">
         <Grid>
-        <Grid.Resources>
-            <kernel:DoubleToIntValueConverter x:Key="DoubleToIntValueConverter"/>
-            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        </Grid.Resources>
-        <i:Interaction.Triggers>
-            <i:EventTrigger EventName="MouseMove">
-                <kernel:RoutedEventToCommandMap Command="{Binding Path=ActionCommand}"/>
-            </i:EventTrigger>
-        </i:Interaction.Triggers>
-        <Grid.RowDefinitions>
+            <Grid.Resources>
+                <kernel:DoubleToIntValueConverter x:Key="DoubleToIntValueConverter"/>
+                <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
             <RowDefinition Height="1*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
             <RowDefinition Height="5*"></RowDefinition>
@@ -22,16 +17,7 @@
         </Grid.RowDefinitions>
         <DockPanel Grid.Row="0" >
             <Grid x:Name="HomeButtonGrid"  Width="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ActualHeight}">
-                <Button  BorderBrush="#FFB4B4B4" Command="{Binding Path=HomeCommand}" BorderThickness="0" 
-                         Width="{Binding ElementName=HomeButtonGrid, Path=Width}"
-                         Height="{Binding ElementName=HomeButtonGrid, Path=ActualHeight}">
-
-                    <Image Source="/Images/Home.png" 
-                           VerticalAlignment="Center" 
-                           HorizontalAlignment="Center"
-                           Margin="20"/>
-
-                </Button>
+                <Button Style="{StaticResource HomeButton}" CommandParameter="{StaticResource False}"/> 
             </Grid>
             <Grid Background="#FF979797">
 
@@ -67,13 +53,14 @@
                 </Grid.RowDefinitions>
                 <TextBlock FontSize="20" Foreground="White" Margin="0,10,0,0">Выберите субъект РФ</TextBlock>
                 <ScrollViewer  x:Name="ScrollViewer" Grid.Row="1"
-                          Background="Transparent"
-                          PanningMode="HorizontalOnly"
-                          HorizontalAlignment="Stretch"
-                          VerticalContentAlignment="Center"
-                          HorizontalScrollBarVisibility="Hidden" 
-                          VerticalScrollBarVisibility="Hidden"
-                          kernel:ScrollViewerBinding.HorizontalOffset="{Binding Path=HorizontalOffset, Mode=TwoWay}"
+                               BorderThickness="0"
+                              Background="Transparent"
+                              PanningMode="HorizontalOnly"
+                              HorizontalAlignment="Stretch"
+                              VerticalContentAlignment="Center"
+                              HorizontalScrollBarVisibility="Hidden" 
+                              VerticalScrollBarVisibility="Hidden"
+                              kernel:ScrollViewerBinding.HorizontalOffset="{Binding Path=HorizontalOffset, Mode=TwoWay}"
                                Margin="0,10">
                     <kernel:PushBindingManager.PushBindings>
                         <kernel:PushBinding TargetProperty="ViewportWidth" Path="VisibleWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
@@ -123,33 +110,23 @@
             </Button>
         </Grid>
         <Grid Grid.Row="3">
-            <Button Background="#FFFFFFFF" 
-                    Command="{Binding Path=GoNextCommand}"
+            <Button Command="{Binding Path=NextCommand}"
                     Height="50"
-                    Width="150"
-                    BorderBrush="#FFCECDCD"
-                    BorderThickness="2"
-                    Style="{StaticResource ImageButton}">
-                <!--<Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border BorderBrush="#FFCECDCD" CornerRadius="2" Background="White" BorderThickness="2">
-                            <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>-->
+                    Width="150" Content="{StaticResource NextButtonGrid}">  
 
-                <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <!--<Grid VerticalAlignment="Center" 
+                      Background="Transparent" 
+                      HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
-                    <Image Grid.Column="0" Width="30" Height="30" Source="../Images/NextButton2.png"/>
-                    <TextBlock Grid.Column="1" FontSize="14">
+                    <Image Grid.Column="0" Stretch="Uniform" HorizontalAlignment="Center" Margin="10,0,0,0" Source="../Images/NextButton2.png"/>--><!--Width="30" Height="30"--><!--
+                    <TextBlock Grid.Column="1" FontSize="18">
                         ДАЛЕЕ
                     </TextBlock>
 
-                </Grid>
+                </Grid>-->
             </Button>
         </Grid>
     </Grid>

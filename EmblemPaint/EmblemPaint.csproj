@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EmblemPaint</RootNamespace>
     <AssemblyName>EmblemPaint</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -121,11 +121,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Configuration.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\CircleViewModel.cs" />
     <Compile Include="ViewModel\ColorViewModel.cs" />
     <Compile Include="ViewModel\FunctionalViewModel.cs" />
     <Compile Include="ViewModel\PaintViewModel.cs" />
@@ -139,17 +141,11 @@
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\PaintViewOld.xaml.cs">
-      <DependentUpon>PaintViewOld.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\PleaseReturnView.xaml.cs">
       <DependentUpon>PleaseReturnView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\ResultView.xaml.cs">
-      <DependentUpon>ResultView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\ScreensaverView.xaml.cs">
-      <DependentUpon>ScreensaverView.xaml</DependentUpon>
+    <Compile Include="View\ResultChart.xaml.cs">
+      <DependentUpon>ResultChart.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\WindowView.xaml.cs">
       <DependentUpon>WindowView.xaml</DependentUpon>
@@ -174,10 +170,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\PaintViewOld.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="View\PaintViewTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -186,9 +178,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\ResultView.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="View\ResultChart.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ResultViewTemplate.xaml">
       <SubType>Designer</SubType>
@@ -197,10 +189,6 @@
     <Page Include="View\ScreensaverTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\ScreensaverView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\SelectRegionTemplate.xaml">
       <SubType>Designer</SubType>

@@ -5,44 +5,35 @@ using System.Windows;
 using System.Windows.Threading;
 using EmblemPaint.Kernel;
 using Prism.Commands;
+// ReSharper disable ExplicitCallerInfoArgument
 
 namespace EmblemPaint.ViewModel
 {
     public class SelectRegionViewModel : FunctionalViewModel
     {
-        public const int ItemsCountByHeight = 3;
-        public const int ItemsCountByWidth = 3;
+        public readonly int VerticalItemsCount;
+        public readonly int HorizontalItemsCount;
         public const double DefaultItemTopMargin = 5;
-        private double visibleWidth, horizontalOffset, allWidth, allHeight, itemSize = Constants.DefaultRegionSize, increment;
-        private Thickness margin;
+        private double visibleWidth, horizontalOffset, allWidth, allHeight, itemWidth, itemHeight, increment;
+        private Thickness margin = new Thickness(5);
         private RegionViewModel selectedRegion;
-        private View.PaintViewOld paintViewOld;
 
-        public SelectRegionViewModel(IEnumerable<Region> regions)
+        public SelectRegionViewModel(Configuration configuration):base(configuration)
         {
-            //заполняем коллекцию регионов
-            FillRegions(regions);
+            this.VerticalItemsCount = configuration.VerticalItemsCount;
+            this.HorizontalItemsCount = configuration.HorizontalItemsCount;
+            this.allWidth = configuration.WindowWidth;
+            this.allHeight = configuration.WindowHeight*(double) 5/9;
+            this.visibleWidth = configuration.WindowWidth - configuration.WindowWidth/7;
+           
+
+            ComputeItemsSize();
+            FillRegions(configuration.Storage.Regions);
             MoveToLeftCommand = new DelegateCommand(MoveToLeft);
             MoveToRightCommand = new DelegateCommand(MoveToRight);
-            //ScreensaverWindow = new View.ScreensaverView(new ScreensaverViewModel());
-            //ScreensaverWindow.Closed += ScreensaverWindow_Closed;
-            //ScreensaverWindow.IsVisibleChanged += ScreensaverWindow_IsVisibleChanged;
-            //ShowScreensaverView();
         }
 
-        private void ScreensaverWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (ScreensaverWindow.Visibility == Visibility.Hidden)
-            {
-                StartTimer();
-            }
-        }
-
-        private void ScreensaverWindowOnStateChanged(object sender, EventArgs eventArgs)
-        {
-            if(ScreensaverWindow.Visibility == Visibility.Hidden)
-            StartTimer();
-        }
+        
 
         private void FillRegions(IEnumerable<Region> regions)
         {
@@ -63,16 +54,20 @@ namespace EmblemPaint.ViewModel
             {
                 this.selectedRegion = value;
                 OnPropertyChanged(nameof(SelectedRegion));
-                Dispatcher.CurrentDispatcher.Invoke(() => GoNextCommand.RaiseCanExecuteChanged());
+                Configuration.SelectedRegion = this.selectedRegion.Region;
+                Dispatcher.CurrentDispatcher.Invoke(() => NextCommand.RaiseCanExecuteChanged());
             }
         }
 
+        /// <summary>
+        /// Ширина видимой области
+        /// </summary>
         public double VisibleWidth
         {
             get { return this.visibleWidth; }
             set
             {
-                if (!this.visibleWidth.Equals(value))
+                if (!this.visibleWidth.Equals(value) && value > 0)
                 {
                     this.visibleWidth = value;
                     OnPropertyChanged(nameof(VisibleWidth));
@@ -84,7 +79,7 @@ namespace EmblemPaint.ViewModel
         }
 
         /// <summary>
-        /// 
+        /// Горизонтальный отступ от левой границы окна
         /// </summary>
         public double HorizontalOffset
         {
@@ -102,52 +97,75 @@ namespace EmblemPaint.ViewModel
         }
 
         /// <summary>
-        /// 
+        /// Вся ширина области выбора региона
         /// </summary>
         public double AllWidth
         {
             get { return this.allWidth; }
             set
             {
-                this.allWidth = value;
-                OnPropertyChanged(nameof(AllWidth));
-                OnPropertyChanged(nameof(CanMoveToLeft));
-                OnPropertyChanged(nameof(CanMoveToRight));
+                if (!this.allWidth.Equals(value) && value > 0)
+                {
+                    this.allWidth = value;
+                    OnPropertyChanged(nameof(AllWidth));
+                    OnPropertyChanged(nameof(CanMoveToLeft));
+                    OnPropertyChanged(nameof(CanMoveToRight));
+                }
             }
         }
 
         /// <summary>
-        /// 
+        /// Высота области выбора региона
         /// </summary>
         public double AllHeight
         {
             get { return this.allHeight; }
             set
             {
-                this.allHeight = value;
-                OnPropertyChanged(nameof(AllHeight));
-                ComputeItemsSize();
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public double ItemSize
-        {
-            get { return this.itemSize; }
-            set
-            {
-                if (!this.itemSize.Equals(value))
+                if (!this.allHeight.Equals(value) && value > 0)
                 {
-                    this.itemSize = value;
-                    OnPropertyChanged(nameof(ItemSize));
+                    this.allHeight = value;
+                    OnPropertyChanged(nameof(AllHeight));
+                    ComputeItemsSize();
                 }
             }
         }
 
         /// <summary>
-        /// 
+        /// Ширина ListViewItem
+        /// </summary>
+        public double ItemWidth
+        {
+            get { return this.itemWidth; }
+            set
+            {
+                if (!this.itemWidth.Equals(value))
+                {
+                    this.itemWidth = value;
+                    OnPropertyChanged(nameof(ItemWidth));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Высота ListViewItem
+        /// </summary>
+        public double ItemHeight
+        {
+            get { return this.itemHeight; }
+            set
+            {
+                if (!this.itemHeight.Equals(value))
+                {
+                    this.itemHeight = value;
+                    OnPropertyChanged(nameof(ItemHeight));
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Отступ между элементами TreeView
         /// </summary>
         public Thickness Margin
         {
@@ -166,42 +184,36 @@ namespace EmblemPaint.ViewModel
 
         private void ComputeItemsSize()
         {
-            //TODO: сделать формирование заданного количества (margin зафиксировать)
-            ItemSize = AllHeight/(ItemsCountByHeight) - ItemsCountByHeight* 2 *DefaultItemTopMargin;
-            
-            int itemsAtHorizontal = (int) Math.Truncate(VisibleWidth/ItemSize);
-            double sideMargin = (VisibleWidth -itemsAtHorizontal*ItemSize)/itemsAtHorizontal - 1;
-            this.increment = sideMargin + ItemSize;
-            Margin = new Thickness(sideMargin/2, DefaultItemTopMargin, sideMargin/2, DefaultItemTopMargin);
+            ItemHeight = AllHeight/this.VerticalItemsCount - Margin.Top*4 - 7;
+            ItemWidth = VisibleWidth/this.HorizontalItemsCount - Margin.Left *2 - 8;
+           
+            this.increment = ItemWidth + this.Margin.Left*2 + 6;
         }
 
-        public void ShowScreensaverView()
-        {
-            SelectedRegion = null;
-            StopTimer();
-            ScreensaverWindow.Dispatcher.Invoke(() => ScreensaverWindow.ShowDialog());
-        }
-
-        private void ScreensaverWindow_Closed(object sender, EventArgs e)
-        {
-            Close(null);
-        }
+      
         
         #region Commands
         
-
+        /// <summary>
+        /// Команда скролла влево
+        /// </summary>
         public DelegateCommand MoveToLeftCommand { get; }
 
+        /// <summary>
+        /// Разрешение на выполенение команды скролла влево
+        /// </summary>
         public bool CanMoveToLeft => HorizontalOffset > 0;
 
+        /// <summary>
+        /// Команда скрола вправо
+        /// </summary>
+        public DelegateCommand MoveToRightCommand { get; }
+
+        /// <summary>
+        /// Разрешение на выполенение команды скролла вправо
+        /// </summary>
         public bool CanMoveToRight => HorizontalOffset < AllWidth - VisibleWidth;
 
-        public DelegateCommand MoveToRightCommand { get; }
-        
-
-        
-
-        
 
         private void MoveToLeft()
         {
@@ -211,7 +223,7 @@ namespace EmblemPaint.ViewModel
             }
             else
             {
-                HorizontalOffset -= this.increment; //ItemSize + Margin.Left + Margin.Right;
+                HorizontalOffset -= this.increment;
             }
         }
         
@@ -224,7 +236,7 @@ namespace EmblemPaint.ViewModel
             }
             else
             {
-                HorizontalOffset += this.increment; //ItemSize + Margin.Left + Margin.Right;
+                HorizontalOffset += this.increment;
             }
         }
 
@@ -239,63 +251,16 @@ namespace EmblemPaint.ViewModel
             }
         }
         #region Overrides
-
-        //protected override void Home(bool? askUser)
-        //{
-        //    base.Home(askUser);
-        //    //ShowScreensaverView();
-        //}
-
-        protected override bool CanExecuteGoNext()
+        
+        /// <summary>
+        /// Блокировка кнопки Далее, если не выбран регион
+        /// </summary>
+        /// <returns></returns>
+        protected override bool CanExecuteNextCommand()
         {
             return SelectedRegion != null;
         }
-
-        protected override void GoNext()
-        {
-            StopTimer();
-            //var paintViewModel = new PaintViewModel(SelectedRegion.Region);
-            //paintViewModel.HomeCommandExecuted += PaintViewModelHomeCommandExecuted;
-            //this.paintViewOld = new View.PaintViewOld(paintViewModel);
-            //this.paintViewOld.Closing += PaintViewOldModelClosing;
-            //this.paintViewOld.ShowDialog();
-        }
-
-        private void PaintViewOldModelClosing(object sender, EventArgs e)
-        {
-            //var paintViewModel = this.paintViewOld.DataContext as PaintViewModel;
-            //if (paintViewModel != null)
-            //{
-            //    paintViewModel.HomeCommandExecuted -= PaintViewModelHomeCommandExecuted;
-            //    this.paintViewOld.Closing -= PaintViewOldModelClosing;
-            //}
-            //this.paintViewOld.Close();
-            //StartTimer();
-        }
-
-        private void PaintViewModelHomeCommandExecuted(object sender, EventArgs e)
-        {
-            //var paintViewModel = sender as PaintViewModel;
-            //if (paintViewModel != null)
-            //{
-            //    this.paintViewOld.Closing -= PaintViewOldModelClosing;
-            //    paintViewModel.HomeCommandExecuted -= PaintViewModelHomeCommandExecuted;
-            //}
-            //this.paintViewOld.Close();
-            //ShowScreensaverView();
-        }
-
-        //protected override void GoBack(object parameter)
-        //{
-        //    base
-        //}
-
-        protected override void Close(Window window)
-        {
-            //ScreensaverWindow.Closed -= ScreensaverWindow_Closed;
-            Application.Current.Shutdown();
-        }
-
+        
         #endregion
     }
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows;
 using EmblemPaint.Kernel;
 using EmblemPaint.View;
@@ -20,36 +14,28 @@ namespace EmblemPaint
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            RegionsStorage storage = null;
-            if (File.Exists(Constants.DefaultStorageName))
-            {
-                try
-                {
-                    using (var stream = new FileStream(Constants.DefaultStorageName, FileMode.Open))
-                    {
-                        storage = RegionsStorage.Load(stream);
-                    }
-                }
-                catch(Exception)
-                { }
-            }
-            if (storage == null)
-            {
-                try
-                {
-                    storage = RegionsStorage.GenerateStorageFromDefaultFolder(new RegionSuffixRegexes());
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("Не удается загрузить данные. Проверьте наличие папки Content в каталоге с программой.");
-                    Shutdown(1);
-                    return;
-                }
-            }
-            var windowDispatcher = new WindowDispatcher(storage);
-            var mainWindow = new MainWindow();//View.MainWindow(storage);
-            mainWindow.DataContext = windowDispatcher;
+            Configuration configuration = LoadConfiguration();
+            
+            var windowDispatcher = new WindowDispatcher(configuration);
+            var mainWindow = new MainWindow {DataContext = windowDispatcher};
             mainWindow.Show();
+        }
+
+        private Configuration LoadConfiguration()
+        {
+            if (File.Exists(Constants.DefaultConfigurationName))
+            {
+                using (var stream = new FileStream(Constants.DefaultConfigurationName, FileMode.Open))
+                {
+                    return Configuration.Load(stream);
+                }
+            }
+            var config = Configuration.GenerateDefault();
+            using (var stream = new FileStream(Constants.DefaultConfigurationName, FileMode.Create))
+            {
+                config.Save(stream);
+            }
+            return config;
         }
     }
 }

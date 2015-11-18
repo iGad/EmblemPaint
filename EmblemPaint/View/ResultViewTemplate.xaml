@@ -1,15 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:viewModel="clr-namespace:EmblemPaint.ViewModel"
-                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:kernel="clr-namespace:EmblemPaint.Kernel;assembly=EmblemPaint.Kernel">
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:view="clr-namespace:EmblemPaint.View">
     <DataTemplate DataType="{x:Type viewModel:ResultViewModel}">
         <Grid>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseMove">
-                    <kernel:RoutedEventToCommandMap Command="{Binding Path=ActionCommand}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
             <Grid.RowDefinitions>
                 <!--11-->
                 <RowDefinition Height="1*"></RowDefinition>
@@ -20,9 +15,9 @@
                 <RowDefinition Height="2*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"></Image>
 
@@ -31,7 +26,22 @@
             <TextBlock Grid.Row="1" Grid.Column="1" FontWeight="Bold" FontStyle="Italic">vs</TextBlock>
 
             <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
-                <TextBlock Text="{Binding Path=Result}" FontWeight="Bold" Foreground="#F0F00000"></TextBlock>
+                
+                <view:ResultChart 
+                    Width="200" 
+                    Height="200" 
+                    StrokeThikness="0" 
+                    BorderThickness="0" 
+                    Foreground="#b14f4a"
+                    StartAngle ="{Binding Path=StartAngle, Mode=OneWay}"
+                    FillingAngle ="{Binding Path=FillingAngle, Mode=OneWay}">
+                    <view:ResultChart.Effect>
+                        <DropShadowEffect BlurRadius="10" Color="#FFB3B3B3"/>
+                    </view:ResultChart.Effect>
+                </view:ResultChart>
+                <Ellipse Fill="#E0E5E5E5" Width="140" Height="140"/>
+                <TextBlock Text="{Binding Path=Result}" Margin="0,-10,0,0" FontWeight="Bold" Foreground="#b14f4a"></TextBlock>
+                <TextBlock Text="Совпадений" Foreground="#FFA5A28E" Margin="0,30,0,0" FontSize="16"/>
             </Grid>
 
             <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">Ваш результат!</TextBlock>
@@ -41,7 +51,7 @@
                 <StackPanel VerticalAlignment="Center">
                     <Button BorderBrush="#FFB4B4B4" 
                         Command="{Binding Path=HomeCommand}" 
-                        
+                        CommandParameter="{StaticResource False}"
                         Width="100" Height="100"
                         BorderThickness="0">
                         <!--CommandParameter="{Binding ElementName=ResultWindow}"-->

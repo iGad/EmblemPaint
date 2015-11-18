@@ -6,10 +6,10 @@
         mc:Ignorable="d"
         WindowState="Maximized"
         WindowStyle="None"
-        Background="White"
-        Title="ConfirmView" Height="500" Width="900">
-    <Grid Background="#2FAAAAAA">
-        <Grid Background="#FFF2F2F2" Width="900" Height="500">
+        AllowsTransparency="True"
+        Background="#1F000000"><!--Height="500" Width="900"-->
+    <Grid>
+        <Grid Background="#FFF2F2F2" Opacity="1" Width="900" Height="500">
             <Grid.RowDefinitions>
                   <RowDefinition Height="3*"/>
                   <RowDefinition Height="1*"/>

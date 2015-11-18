@@ -98,11 +98,11 @@ namespace KernelTests
 
             foreach (var region in storage.Regions)
             {
-                Assert.IsTrue(region.PatternImageName == region.Name + "_pattern");
-                Assert.IsTrue(region.SourceImageName == region.Name + "_ideal");
-                Assert.IsTrue(region.ThumbnailImageName == region.Name + "_thumb");
+                Assert.IsTrue(Path.GetFileNameWithoutExtension(region.PatternImageName) == region.Name + "_pattern");
+                Assert.IsTrue(Path.GetFileNameWithoutExtension(region.SourceImageName) == region.Name + "_ideal");
+                Assert.IsTrue(Path.GetFileNameWithoutExtension(region.ThumbnailImageName) == region.Name + "_thumb");
             }
-            
+
         }
 
 
@@ -129,7 +129,7 @@ namespace KernelTests
         {
             var regexes = TestHelper.CreateTestsRegionSuffixRegexes();
 
-            var storage = RegionsStorage.Generate("TestFiles", regexes);
+            var storage = RegionsStorage.Generate(TestHelper.TestRegionFolder, regexes);
 
             Assert.IsTrue(storage.Regions.Count == 3 && IsRegionsCorrect(storage.Regions));
         }
@@ -140,7 +140,7 @@ namespace KernelTests
             if(File.Exists("TestStorage.xml"))
                 File.Delete("TestStorage.xml");
             var regexes = TestHelper.CreateTestsRegionSuffixRegexes();
-            var storage = RegionsStorage.Generate("TestFiles", regexes);
+            var storage = RegionsStorage.Generate(TestHelper.TestRegionFolder, regexes);
 
             using (FileStream stream = new FileStream("TestStorage.xml", FileMode.Create, FileAccess.Write))
             {
@@ -177,7 +177,7 @@ namespace KernelTests
             if (File.Exists("TestStorage.xml"))
                 File.Delete("TestStorage.xml");
             var regexes = TestHelper.CreateTestsRegionSuffixRegexes();
-            var storage = RegionsStorage.Generate("TestFiles", regexes);
+            var storage = RegionsStorage.Generate(TestHelper.TestRegionFolder, regexes);
 
             using (FileStream stream = new FileStream("TestStorage.xml", FileMode.Create, FileAccess.Write))
             {

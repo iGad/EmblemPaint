@@ -18,6 +18,8 @@ namespace EmblemPaint.Kernel
         
         public List<Region> Regions { get; set; } = new List<Region>();
 
+        public static RegionsStorage DefaultStorage => new RegionsStorage();
+
         public static RegionsStorage Load(Stream stream)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(RegionsStorage));
@@ -30,18 +32,16 @@ namespace EmblemPaint.Kernel
             serializer.Serialize(stream, this);
         }
 
-        public static RegionsStorage GenerateStorageFromDefaultFolder(RegionSuffixRegexes regionSuffixRegexes)
+        public static RegionsStorage Generate(string folderName, RegionSuffixRegexes regionSuffixRegexes)
         {
-            return Generate(Constants.DefaultStorageDirectoryName, regionSuffixRegexes);
-        }
-
-        internal static RegionsStorage Generate(string folderName, RegionSuffixRegexes regionSuffixRegexes)
-        {
+            if (!Directory.Exists(folderName))
+            {
+                return DefaultStorage;
+            }
             folder = folderName;
             var storage = new RegionsStorage();
             FileInfo[] files = (new DirectoryInfo(folder)).GetFiles("*_*.png");
-            var fileNames = Directory.GetFiles(folder);
-            var sortedFileNames = files.Select(file => file.Name).ToList();//fileNames.Where(fileName => fileName.IndexOf(regionSuffixRegexes.Separator) < fileName.Length - 1).ToList();
+            var sortedFileNames = files.Select(file => file.Name).ToList();
             sortedFileNames.Sort();
             var separtedFileNames = sortedFileNames.Select(file=>file.Split(regionSuffixRegexes.Separator)).ToList();
 
