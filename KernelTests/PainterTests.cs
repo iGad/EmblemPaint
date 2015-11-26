@@ -117,7 +117,7 @@ namespace KernelTests
             var painter = new Painter(GetTestPatternImage(), GetTestSourceImage());
             var expectedColor = this.testColors[colorIndex];
 
-            var result = painter.GetSourceImageColorByCoordinate(x, y);
+            var result = painter.GetSourceColor(x, y);
 
             Assert.AreEqual(expectedColor, result);
         }
@@ -140,9 +140,9 @@ namespace KernelTests
             var painter = new Painter(GetTestPatternImage(), GetTestSourceImage());
             var expectedColor = this.testColors[colorIndex];
 
-            painter.FillPixel(painter.PatternImage, x, y, expectedColor);
+            painter.FillPixel(painter.FilledImage, x, y, expectedColor);
 
-            Assert.IsTrue(IsPixelHasExpectedColor(painter.PatternImage, x, y, expectedColor));
+            Assert.IsTrue(IsPixelHasExpectedColor(painter.FilledImage, x, y, expectedColor));
         }
     }
 }

@@ -15,14 +15,14 @@
             <RowDefinition Height="5*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0" >
+        <DockPanel Grid.Row="0">
             <Grid x:Name="HomeButtonGrid"  Width="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ActualHeight}">
                 <Button Style="{StaticResource HomeButton}" CommandParameter="{StaticResource False}"/> 
             </Grid>
-            <Grid Background="#FF979797">
-
-            </Grid>
-        </DockPanel>
+                <Grid Background="White">
+                    <Image Source="../Images/logo.jpg"/>
+                </Grid>
+            </DockPanel>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -110,24 +110,10 @@
             </Button>
         </Grid>
         <Grid Grid.Row="3">
-            <Button Command="{Binding Path=NextCommand}"
+                <Button Command="{Binding Path=NextCommand}"
                     Height="50"
-                    Width="150" Content="{StaticResource NextButtonGrid}">  
-
-                <!--<Grid VerticalAlignment="Center" 
-                      Background="Transparent" 
-                      HorizontalAlignment="Stretch">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="2*"/>
-                    </Grid.ColumnDefinitions>
-                    <Image Grid.Column="0" Stretch="Uniform" HorizontalAlignment="Center" Margin="10,0,0,0" Source="../Images/NextButton2.png"/>--><!--Width="30" Height="30"--><!--
-                    <TextBlock Grid.Column="1" FontSize="18">
-                        ДАЛЕЕ
-                    </TextBlock>
-
-                </Grid>-->
-            </Button>
+                    Width="150" Content="{StaticResource NextButtonGrid}">
+                </Button>
         </Grid>
     </Grid>
     </DataTemplate>

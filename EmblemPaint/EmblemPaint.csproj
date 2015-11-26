@@ -122,6 +122,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Configuration.cs" />
+    <Compile Include="FunctionalViewModel.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -129,11 +130,11 @@
     </Compile>
     <Compile Include="ViewModel\CircleViewModel.cs" />
     <Compile Include="ViewModel\ColorViewModel.cs" />
-    <Compile Include="ViewModel\FunctionalViewModel.cs" />
     <Compile Include="ViewModel\PaintViewModel.cs" />
     <Compile Include="ViewModel\ResultViewModel.cs" />
     <Compile Include="ViewModel\ScreensaverViewModel.cs" />
     <Compile Include="ViewModel\SelectRegionViewModel.cs" />
+    <Compile Include="ViewModel\SendEmailViewModel.cs" />
     <Compile Include="ViewModel\WindowDispatcher.cs" />
     <Compile Include="View\ConfirmView.xaml.cs">
       <DependentUpon>ConfirmView.xaml</DependentUpon>
@@ -146,6 +147,9 @@
     </Compile>
     <Compile Include="View\ResultChart.xaml.cs">
       <DependentUpon>ResultChart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ScreensaverAnimation.xaml.cs">
+      <DependentUpon>ScreensaverAnimation.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\WindowView.xaml.cs">
       <DependentUpon>WindowView.xaml</DependentUpon>
@@ -186,11 +190,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\ScreensaverAnimation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ScreensaverTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\SelectRegionTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SendEmailView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -270,6 +282,21 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Brushes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Hand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Gerb_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\GerbPattern_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\EmptyBrush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\logo.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

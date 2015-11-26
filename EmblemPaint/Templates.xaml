@@ -30,16 +30,11 @@
                 VerticalAlignment="Center"
                 BorderThickness="3"
                 Background="Transparent"
-                Style="{StaticResource ColorListItemBorderStyle}">
-            <Grid VerticalAlignment="Center" Width="80"
-                                        Height="50"
-                                        Margin="5" >
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="4*"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
+                
+                Style="{StaticResource ColorListItemBorderStyle}"><!--Width="{TemplateBinding ActualWidth}"
+                Height="{TemplateBinding ActualHeight}"-->
+            <Grid VerticalAlignment="Center">
                 <Image Source="{Binding Path=(kernel:ListViewItemModel.Thumbnail)}" StretchDirection="Both"></Image>
-                <TextBlock Grid.Row="1" Style="{StaticResource ListItemTextBlock}"/>
             </Grid>
         </Border>
     </ControlTemplate>

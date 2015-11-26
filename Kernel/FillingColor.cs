@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Media;
+using System.Xml.Serialization;
 
 namespace EmblemPaint.Kernel
 {
@@ -17,44 +14,36 @@ namespace EmblemPaint.Kernel
     {
         public FillingColor()
         {
-            Color = "00000000";
-            Name = "Default";
+            HexArgbColor = "00000000";
         }
 
-        public FillingColor(string color, string name, string pathToImage)
+        public FillingColor(Color color)
         {
-            Color = color;
-            Name = name;
-            PathToImage = pathToImage;
+            HexArgbColor = color.ToHexString();
         }
-
-        public string Color { get; set; }
-
-        public string PathToImage { get; set; }
-
-        public string Name { get; set; }
+        
+        public string HexArgbColor { get; set; }
+        
+        [XmlIgnore]
+        public Color Color
+        {
+            get
+            {
+                string hexCode = Regex.Match(HexArgbColor, ColorRegex).Value.Replace("#", string.Empty);
+                return !string.IsNullOrWhiteSpace(hexCode) ? GetColor(hexCode) : GetSystemColor();
+            }
+        }
 
         public static FillingColor DefaultBrush => new FillingColor
         {
-            Color = "FFFF0000",
-            Name = "Default"
+            HexArgbColor = "FFFF0000"
         };
 
         public static string ColorRegex => @"[#]?([0-9]|[a-f]|[A-F]){8}";
 
-        public Color GetColor()
-        {
-            string hexCode = Regex.Match(Color, ColorRegex).Value.Replace("#", string.Empty);
-            if (!string.IsNullOrWhiteSpace(hexCode))
-            {
-                return GetColor(hexCode);
-            }
-            return GetSystemColor();
-        }
-
         private Color GetColor(string hexCode)
         {
-            return System.Windows.Media.Color.FromArgb(
+            return Color.FromArgb(
                 byte.Parse(hexCode.Substring(0, 2), NumberStyles.HexNumber),
                 byte.Parse(hexCode.Substring(2, 2), NumberStyles.HexNumber),
                 byte.Parse(hexCode.Substring(4, 2), NumberStyles.HexNumber),
@@ -65,7 +54,7 @@ namespace EmblemPaint.Kernel
         {
             return typeof (Colors)
                 .GetProperties(BindingFlags.Public | BindingFlags.Static)
-                .Where(p => p.PropertyType == typeof (Color) && string.Equals(p.Name, Color, StringComparison.CurrentCultureIgnoreCase))
+                .Where(p => p.PropertyType == typeof (Color) && string.Equals(p.Name, HexArgbColor, StringComparison.CurrentCultureIgnoreCase))
                 .Select(p=> (Color)p.GetValue(null, null)).FirstOrDefault();
         } 
 
@@ -86,10 +75,8 @@ namespace EmblemPaint.Kernel
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
             FillingColor brush = DefaultBrush;
-            brush.PathToImage = path;
-            brush.Name = fileName;
             int brushPosition = fileName.IndexOf("Brush", 0, StringComparison.CurrentCultureIgnoreCase);
-            brush.Color = brushPosition > 0 ? fileName.Substring(0, brushPosition) : fileName;
+            brush.HexArgbColor = brushPosition > 0 ? fileName.Substring(0, brushPosition) : fileName;
             return brush;
         }
     }

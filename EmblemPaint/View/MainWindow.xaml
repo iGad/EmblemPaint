@@ -1,0 +1,30 @@
+﻿<Window x:Class="EmblemPaint.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:kernel="clr-namespace:EmblemPaint.Kernel;assembly=EmblemPaint.Kernel"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:viewModel="clr-namespace:EmblemPaint.ViewModel"
+        mc:Ignorable="d"
+        x:Name="Window" 
+        Height="{Binding Path=WindowHeight}" 
+        Width="{Binding Path=WindowWidth}"
+        Topmost="False" WindowStyle="None" WindowStartupLocation="CenterScreen"> <!--WindowState="Maximized"-->
+    <Window.Resources>
+        <kernel:DoubleToIntValueConverter x:Key="DoubleToIntValueConverter"/>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="MouseMove">
+            <kernel:RoutedEventToCommandMap Command="{Binding Path=(viewModel:WindowDispatcher.ActionCommand)}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding Path=(viewModel:WindowDispatcher.CloseCommand)}"></i:InvokeCommandAction>
+        </i:EventTrigger>
+    </i:Interaction.Triggers> <!---->
+    <kernel:PushBindingManager.PushBindings>
+        <kernel:PushBinding TargetProperty="ActualWidth" Path="WindowWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
+        <kernel:PushBinding TargetProperty="ActualHeight" Path="WindowHeight" Converter="{StaticResource DoubleToIntValueConverter}"/>
+    </kernel:PushBindingManager.PushBindings>
+    <ContentPresenter Content="{Binding Path=(viewModel:WindowDispatcher.ActiveModel)}" />
+</Window>

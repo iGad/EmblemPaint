@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using EmblemPaint.Kernel;
 using EmblemPaint.View;
+using Microsoft.Practices.Prism.Commands;
 
 namespace EmblemPaint.ViewModel
 {
@@ -11,38 +15,52 @@ namespace EmblemPaint.ViewModel
         private double windowHeight, windowWidth;
         private readonly Timer timer;
         private FunctionalViewModel activeModel;
-        private readonly ScreensaverViewModel screensaverViewModel;
-        private readonly SelectRegionViewModel selectRegionViewModel;
 
-        public WindowDispatcher(Configuration configuration):base(configuration)
+
+        public WindowDispatcher(Configuration configuration, IList<FunctionalViewModel> models):base(configuration)
         {
+            CloseCommand = new DelegateCommand(Close);
             Configuration = configuration;
             WindowHeight = configuration.WindowHeight;
             WindowWidth = configuration.WindowWidth;
             this.timer = new Timer(configuration.WaitUserActionInterval * 1000);
             this.timer.Elapsed += OnTimerElapsed;
-            this.screensaverViewModel = new ScreensaverViewModel(configuration);
-            this.selectRegionViewModel = new SelectRegionViewModel(configuration);
+            Models = models;
             Subscribe();
-            ActiveModel = this.screensaverViewModel;
+            ActiveModel = Models.First();
         }
 
         #region Properties
 
+        /// <summary>
+        /// Список моделей окон
+        /// </summary>
+        public IList<FunctionalViewModel> Models { get; } 
+
+        /// <summary>
+        /// Текущая модель окна
+        /// </summary>
         public FunctionalViewModel ActiveModel
         {
             get { return this.activeModel; }
             set
             {
                 this.activeModel = value;
-                if (this.activeModel != this.screensaverViewModel)
+                if (this.activeModel != Models.First())
                 {
                     ResetTimer();
+                }
+                else
+                {
+                    this.timer.Stop();
                 }
                 OnPropertyChanged(nameof(ActiveModel));
             }
         }
 
+        /// <summary>
+        /// Высота окна
+        /// </summary>
         public double WindowHeight
         {
             get { return this.windowHeight; }
@@ -51,11 +69,15 @@ namespace EmblemPaint.ViewModel
                 if (!this.windowHeight.Equals(value))
                 {
                     this.windowHeight = value;
+                    Configuration.WindowHeight = Convert.ToInt32(value);
                     OnPropertyChanged(nameof(WindowHeight));
                 }
             }
         }
 
+        /// <summary>
+        /// Ширина окна
+        /// </summary>
         public double WindowWidth
         {
             get { return this.windowWidth; }
@@ -64,108 +86,59 @@ namespace EmblemPaint.ViewModel
                 if (!this.windowWidth.Equals(value))
                 {
                     this.windowWidth = value;
+                    Configuration.WindowWidth = Convert.ToInt32(value);
                     OnPropertyChanged(nameof(WindowWidth));
                 }
             }
         }
 
+        /// <summary>
+        /// Команда закрытия окна
+        /// </summary>
+        public DelegateCommand CloseCommand { get; }
+
+
         #endregion
 
         private void Subscribe()
         {
-            this.screensaverViewModel.NextCommandExecuted += ScreensaverViewModelOnNextCommandExecuted;
-            this.selectRegionViewModel.HomeCommandExecuted += ViewModelOnHomeCommandExecuted;
-            this.selectRegionViewModel.NextCommandExecuted += SelectRegionViewModelOnNextCommandExecuted;
-        }
-
-        #region Event handlers
-
-        #region Screensaver
-
-        private void ScreensaverViewModelOnNextCommandExecuted(object sender, EventArgs eventArgs)
-        {
-            ActiveModel = this.selectRegionViewModel;
-        }
-
-        #endregion
-
-        #region SelectRegion
-
-        private void SelectRegionViewModelOnNextCommandExecuted(object sender, EventArgs eventArgs)
-        {
-            var paintViewModel = new PaintViewModel(Configuration);
-            SubscribeToPaintViewModel(paintViewModel);
-            ActiveModel = paintViewModel;
-        }
-
-        #endregion
-
-        #region Paint
-
-        private void SubscribeToPaintViewModel(PaintViewModel paintViewModel)
-        {
-            paintViewModel.BackCommandExecuted += PaintViewModelOnBackCommandExecuted;
-            paintViewModel.NextCommandExecuted += PaintViewModelOnNextCommandExecuted;
-            paintViewModel.HomeCommandExecuted += ViewModelOnHomeCommandExecuted;
-            paintViewModel.Disposing += PaintViewModelOnDisposing;
-        }
-
-        private void PaintViewModelOnDisposing(object sender, EventArgs eventArgs)
-        {
-            var paintViewModel = sender as PaintViewModel;
-            if (paintViewModel != null)
+            foreach (var functionalViewModel in Models)
             {
-                UnsubscribeFromPaintViewModel(paintViewModel);
+                functionalViewModel.BackCommandExecuted += FunctionalViewModelOnBackCommandExecuted;
+                functionalViewModel.NextCommandExecuted += FunctionalViewModelOnNextCommandExecuted;
+                functionalViewModel.HomeCommandExecuted += FunctionalViewModelOnHomeCommandExecuted;
             }
         }
 
-        private void UnsubscribeFromPaintViewModel(PaintViewModel paintViewModel)
+        private void FunctionalViewModelOnHomeCommandExecuted(object sender, EventArgs<bool> eventArgs)
         {
-            paintViewModel.BackCommandExecuted -= PaintViewModelOnBackCommandExecuted;
-            paintViewModel.NextCommandExecuted -= PaintViewModelOnNextCommandExecuted;
-            paintViewModel.HomeCommandExecuted -= ViewModelOnHomeCommandExecuted;
-            paintViewModel.Disposing -= PaintViewModelOnDisposing;
-        }
-
-        private void PaintViewModelOnNextCommandExecuted(object sender, EventArgs eventArgs)
-        {
-            var paintViewModel = sender as PaintViewModel;
-            if (paintViewModel != null)
+            if (AskUserConfirmation(eventArgs.Parameter))
             {
-                var resultViewModel = new ResultViewModel(paintViewModel.RegionSymbol, paintViewModel.SourceImage, paintViewModel.CalculateFillAccuracy(), Configuration);
-                resultViewModel.HomeCommandExecuted += ViewModelOnHomeCommandExecuted;
-                resultViewModel.Disposing += ResultViewModelOnDisposing;
-                paintViewModel.Dispose();
-                ActiveModel = resultViewModel;
+                ActiveModel = Models.First();
             }
         }
 
-        private void PaintViewModelOnBackCommandExecuted(object sender, EventArgs eventArgs)
+        private void FunctionalViewModelOnNextCommandExecuted(object sender, EventArgs eventArgs)
         {
-            if (AskUserConfirmation(true))
+            int index = Models.IndexOf(ActiveModel);
+            if (index < Models.Count - 1)
             {
-                var paintViewModel = sender as Kernel.ViewModel;
-                paintViewModel?.Dispose();
-                ActiveModel = this.selectRegionViewModel;
+                Models[index + 1].Reconfigure(ActiveModel.Configuration);
+                ActiveModel = Models[index + 1];
             }
         }
 
-        #endregion
-
-        #region Result
-
-        private void ResultViewModelOnDisposing(object sender, EventArgs eventArgs)
+        private void FunctionalViewModelOnBackCommandExecuted(object sender, EventArgs eventArgs)
         {
-            var resultViewModel = sender as ResultViewModel;
-            if (resultViewModel != null)
+            int index = Models.IndexOf(ActiveModel);
+            if (index > 0)
             {
-                resultViewModel.HomeCommandExecuted -= ViewModelOnHomeCommandExecuted;
-                resultViewModel.Disposing -= ResultViewModelOnDisposing;
+                Models[index - 1].Reconfigure(ActiveModel.Configuration);
+                ActiveModel = Models[index - 1];
             }
         }
 
-        #endregion
-
+     
         private bool AskUserConfirmation(bool needAsking)
         {
             if (needAsking)
@@ -175,20 +148,7 @@ namespace EmblemPaint.ViewModel
             }
             return true;
         }
-
-        private void ViewModelOnHomeCommandExecuted(object sender, EventArgs<bool> eventArgs)
-        {
-            
-            if (AskUserConfirmation(eventArgs.Parameter))
-            {
-                var resultViewModel = sender as Kernel.ViewModel;
-                if (resultViewModel != this.selectRegionViewModel)
-                {
-                    resultViewModel?.Dispose();
-                }
-                ActiveModel = this.screensaverViewModel;
-            }
-        }
+        
 
         private void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
@@ -219,6 +179,38 @@ namespace EmblemPaint.ViewModel
             this.timer.Start();
         }
 
+        private void Close()
+        {
+            SaveConfiguration();
+        }
+
+        private void SaveConfiguration()
+        {
+            string tempFileName = "Temp" + Constants.DefaultConfigurationName;
+            try
+            {
+                if (File.Exists(Constants.DefaultConfigurationName))
+                {
+                    File.Copy(Constants.DefaultConfigurationName, tempFileName);
+                }
+                using (Stream sw = new FileStream(Constants.DefaultConfigurationName, FileMode.Create, FileAccess.Write))
+                {
+                    Configuration.Save(sw);
+                }
+            }
+            catch
+            {
+                if (File.Exists(tempFileName))
+                {
+                    if (File.Exists(Constants.DefaultConfigurationName))
+                    {
+                        File.Delete(Constants.DefaultConfigurationName);
+                    }
+                    File.Move(tempFileName, Constants.DefaultConfigurationName);
+                }
+            }
+        }
+
         protected override void OnActionHappened()
         {
             if (this.timer.Enabled)
@@ -226,7 +218,6 @@ namespace EmblemPaint.ViewModel
                 ResetTimer();
             }
         }
-
-        #endregion
+        
     }
 }

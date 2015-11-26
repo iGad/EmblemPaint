@@ -69,6 +69,7 @@
     <Compile Include="TestHelper.cs" />
     <Compile Include="PainterTests.cs" />
     <Compile Include="FillingColorTests.cs" />
+    <Compile Include="ColorExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

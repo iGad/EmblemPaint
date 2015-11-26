@@ -11,56 +11,81 @@ using Prism.Commands;
 
 namespace EmblemPaint.ViewModel
 {
+    /// <summary>
+    /// Модель окна раскрашивания
+    /// </summary>
     public class PaintViewModel : FunctionalViewModel
     {
         private Region region;
-        private WriteableBitmap regionSymbol;
-        private BitmapImage sourceImage;
+        private WriteableBitmap patternImage;
         private Painter painter;
         private ColorViewModel selectedColorViewModel;
-        private double imageWidth, imageHeight;
+        private double imageWidth, imageHeight, brushWidth, brushHeight;
 
         public PaintViewModel(Configuration configuration):base(configuration)
         {
             MouseDownCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(OnMouseDown);
-            this.region = configuration.SelectedRegion;
-            this.sourceImage = Utilities.GetImageFromFile(this.region.SourceImageName);
-            var symbolImage = Utilities.GetImageFromFile(this.region.PatternImageName);
-            this.regionSymbol = new WriteableBitmap(symbolImage);
-            this.painter = new Painter(this.regionSymbol, this.sourceImage);
-            Colors = GetColors();
-            Colors.First().IsSelected = true;
-            //TODO: Проверка на равенство размеров изображений и соответствующие действия
         }
 
-        private void OnMouseDown(EventInformation<MouseEventArgs> obj)
+        #region Properties
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public double WindowWidth
         {
-            var point = obj.EventArgs.GetPosition((IInputElement) obj.Sender);
-            var normalizePoint = new Point(Convert.ToInt32(point.X*SourceImage.PixelWidth/ImageWidth),
-                Convert.ToInt32(point.Y*SourceImage.PixelHeight/ImageHeight));
-            Color sourceColor = SourceImage.GetColor((int) normalizePoint.X, (int) normalizePoint.Y);
-            if (IsNonFillingColor(sourceColor))
+            set
             {
-                //TODO: сообщаем о том, что выбранная область незакрашиваема
+                if (value > 0)
+                {
+                    BrushWidth = value/Colors.Count - 10;
+                }
             }
-            else
-            {
-                RegionSymbol = this.painter.FillImage(normalizePoint, SelectedColor.Color);
-            }
-            //Определяем позицию на изображении
-            //Находим ближайший не черный пиксель
-            //Запускаем закраску
         }
 
-        private bool IsNonFillingColor(Color sourceColor)
+        /// <summary>
+        /// 
+        /// </summary>
+        public double BrushContainerHeight
         {
-            return sourceColor.IsNearEqualTo(System.Windows.Media.Colors.White, 9) ||
-                   sourceColor.IsNearEqualTo(System.Windows.Media.Colors.Black, 9) ||
-                   sourceColor.IsNearEqualTo(System.Windows.Media.Colors.Transparent, 9) ||
-                   sourceColor.IsNearEqualTo(Color.FromArgb(0,0,0,0), 9);
+            set
+            {
+                if (value > 0)
+                {
+                    BrushHeight = value - 10;
+                }
+            }
         }
 
+        public double BrushWidth
+        {
+            get { return this.brushWidth; }
+            set
+            {
+                if (!this.brushWidth.Equals(value))
+                {
+                    this.brushWidth = value;
+                    OnPropertyChanged(nameof(BrushWidth));
+                }
+            }
+        }
 
+        public double BrushHeight
+        {
+            get { return this.brushHeight; }
+            set
+            {
+                if (!this.brushHeight.Equals(value))
+                {
+                    this.brushHeight = value;
+                    OnPropertyChanged(nameof(BrushHeight));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ширина изображения на экране
+        /// </summary>
         public double ImageWidth
         {
             get { return this.imageWidth; }
@@ -71,6 +96,9 @@ namespace EmblemPaint.ViewModel
             }
         }
 
+        /// <summary>
+        /// Высота изображения на экране
+        /// </summary>
         public double ImageHeight
         {
             get { return this.imageHeight; }
@@ -81,22 +109,37 @@ namespace EmblemPaint.ViewModel
             }
         }
 
-        public BitmapSource SourceImage => this.sourceImage;
+        /// <summary>
+        /// Идеальное изображение
+        /// </summary>
+        public BitmapImage SourceImage { get; private set; }
 
-        public WriteableBitmap RegionSymbol
+        /// <summary>
+        /// Закрашиваемое изображение
+        /// </summary>
+        public WriteableBitmap PatternImage
         {
-            get { return this.regionSymbol; }
+            get { return this.patternImage; }
             set
             {
-                this.regionSymbol = value;
-                OnPropertyChanged(nameof(RegionSymbol));
+                this.patternImage = value;
+                OnPropertyChanged(nameof(PatternImage));
             }
         }
 
-        public ObservableCollection<ColorViewModel> Colors { get; } 
+        /// <summary>
+        /// Набор цветов для закрашивания
+        /// </summary>
+        public ObservableCollection<ColorViewModel> Colors { get; private set; } 
 
+        /// <summary>
+        /// Команда обработки нажатия на кнопку мыши
+        /// </summary>
         public DelegateCommand<EventInformation<MouseEventArgs>> MouseDownCommand { get; }
 
+        /// <summary>
+        /// Текущий выбранный цвет закраски
+        /// </summary>
         public ColorViewModel SelectedColor
         {
             get
@@ -113,14 +156,60 @@ namespace EmblemPaint.ViewModel
             }
         }
 
-        public int CalculateFillAccuracy()
+        #endregion
+
+        private void OnMouseDown(EventInformation<MouseEventArgs> obj)
         {
-            return this.painter.CalculateFillAccuracy();
+            var point = obj.EventArgs.GetPosition((IInputElement)obj.Sender);
+            var normalizePoint = new Point(Convert.ToInt32(point.X * SourceImage.PixelWidth / ImageWidth),
+                Convert.ToInt32(point.Y * SourceImage.PixelHeight / ImageHeight));
+            Color sourceColor = SourceImage.GetColor((int)normalizePoint.X, (int)normalizePoint.Y);
+            byte[] pixel = { sourceColor.B, sourceColor.G, sourceColor.R, sourceColor.A };
+            if (Utilities.IsColorPixel(pixel))
+            {
+                PatternImage = this.painter.FillImage(normalizePoint, SelectedColor.Color);
+
+            }
+            else
+            {
+                //TODO: сообщаем о том, что выбранная область незакрашиваема
+                //FilledImage = this.painter.FillImage(normalizePoint, SelectedColor.Color);
+            }
+        }
+
+        private void Update()
+        {
+            this.region = Configuration.SelectedRegion;
+            if (this.region != null)
+            {
+                ResetSourceImage();
+                var image = Utilities.GetImageFromFile(this.region.PatternImageName);
+                PatternImage = new WriteableBitmap(image);
+                this.painter = new Painter(this.patternImage, SourceImage);
+                if (Colors != null)
+                    Colors.Clear();
+                Colors = GetColors();
+                Colors.First().IsSelected = true;
+            }
+           
+            WindowWidth = Configuration.WindowWidth;
+            BrushContainerHeight = Configuration.WindowHeight*(double)4/45;
+        }
+
+        private void ResetSourceImage()
+        {
+            if (SourceImage != null)
+                Utilities.DisposeImage(SourceImage);
+                SourceImage = Utilities.GetImageFromFile(this.region.SourceImageName);
+                if (SourceImage.CanFreeze)
+                    SourceImage.Freeze();
         }
 
         private ObservableCollection<ColorViewModel> GetColors()
         {
-            return GetColors(Configuration.Colors.Any() ? Configuration.Colors : Constants.DefaultColors.ToList());
+            return GetColors(this.region.Colors.Any() ? this.region.Colors : 
+                Configuration.Colors.Any() ? Configuration.Colors : 
+                Constants.ByDefaultColors.Select(c => new FillingColor(c)).ToList());
         }
 
         private ObservableCollection<ColorViewModel> GetColors(IList<FillingColor> fillingColors)
@@ -130,41 +219,17 @@ namespace EmblemPaint.ViewModel
             return new ObservableCollection<ColorViewModel>(collection);
         }
 
-        private ObservableCollection<ColorViewModel> LoadConfigurationColors()
-        {
-            List<ColorViewModel> collection = new List<ColorViewModel>(Configuration.Colors.Count);
-            collection.AddRange(Configuration.Colors.Select(LoadColor));
-            return new ObservableCollection<ColorViewModel>(collection);
-        }
-
         private ColorViewModel LoadColor(FillingColor fillingColor)
         {
-            var image = Utilities.GetImageFromFile(fillingColor.PathToImage);
-            if (image.CanFreeze)
-            {
-                image.Freeze();
-            }
-            return new ColorViewModel(fillingColor.GetColor()) {Thumbnail = image};
+            var image = Utilities.GetColorBrushImage(fillingColor.Color);
+            return new ColorViewModel(fillingColor.Color) {Thumbnail = image};
         }
 
-        //private ObservableCollection<ColorViewModel> LoadDefaultColors()
-        //{
-        //    List<ColorViewModel> collection = new List<ColorViewModel>(Constants.DefaultColors.Count);
-        //    collection.AddRange(Constants.DefaultColors.Select(CreateViewModel));
-
-        //    return new ObservableCollection<ColorViewModel>(collection);
-        //}
-
-        //private static ColorViewModel CreateViewModel(FillingColor fillingColor)
-        //{
-        //    BitmapSource thumbnail = Utilities.GetImageFromFile(Constants.DefaultBrushesDirectoryName + "\\"+fillingColor.ThumbnailName);
-        //    if(thumbnail.CanFreeze)
-        //    {
-        //        thumbnail.Freeze();
-        //    }
-        //    return new ColorViewModel(fillingColor.Color) {Thumbnail = thumbnail};
-        //}
-
+        public override void Reconfigure(Configuration newConfig)
+        {
+            base.Reconfigure(newConfig);
+            Update();
+        }
 
         protected override void Next()
         {
@@ -174,13 +239,8 @@ namespace EmblemPaint.ViewModel
 
         protected override void DoDispose()
         {
-            foreach (var colorViewModel in Colors)
-            {
-                ((BitmapImage)colorViewModel.Thumbnail)?.StreamSource?.Close();
-            }
             ((BitmapImage)this.painter.SourceImage)?.StreamSource?.Close();
             Colors.Clear();
-            
         }
     }
 }

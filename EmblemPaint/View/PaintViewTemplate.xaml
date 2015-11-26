@@ -11,15 +11,18 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="6*"/>
-                <RowDefinition Height="2*"/>
+                <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
+            <kernel:PushBindingManager.PushBindings>
+                <kernel:PushBinding TargetProperty="ActualWidth" Path="WindowWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
+            </kernel:PushBindingManager.PushBindings>
             <DockPanel Grid.Row="0" >
                 <Grid  Width="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ActualHeight}">
                     <Button Style="{StaticResource HomeButton}"  CommandParameter="{StaticResource True}"/> 
                 </Grid>
-                <Grid Background="#FF979797">
-
+                <Grid Background="White">
+                    <Image Source="../Images/logo.jpg"/>
                 </Grid>
             </DockPanel>
 
@@ -30,7 +33,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock>Нажмите, чтобы закрасить область</TextBlock>
                 <Image Grid.Row="1" Margin="40,20" x:Name="Image" 
-                   Source="{Binding Path=RegionSymbol}">
+                   Source="{Binding Path=PatternImage}">
                     <kernel:PushBindingManager.PushBindings>
                         <kernel:PushBinding TargetProperty="ActualWidth" Path="ImageWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
                         <kernel:PushBinding TargetProperty="ActualHeight" Path="ImageHeight" Converter="{StaticResource DoubleToIntValueConverter}"/>
@@ -51,29 +54,29 @@
                 <TextBlock FontSize="18">
                 Выберите цвет
                 </TextBlock>
-                <ScrollViewer Grid.Row="1"
-                          x:Name="ColorScrollViewer"
-                          VerticalScrollBarVisibility="Hidden"
-                          HorizontalScrollBarVisibility="Hidden">
-                    <ListView x:Name="ColorListView" Background="Transparent" BorderThickness="0" 
+                <ListView Grid.Row="1" x:Name="ColorListView" Background="Transparent" BorderThickness="0" 
                           ItemsSource="{Binding Path=Colors}"
                           SelectedItem="{Binding Path=SelectedColor}">
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Width="{Binding ElementName=ColorScrollViewer, Path=ActualWidth}"
-                                       Height="{Binding ElementName=ColorScrollViewer, Path=ActualHeight}"
-                                       HorizontalAlignment="Center"/>
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.Resources>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}"></Setter>
-                                <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"></Setter>
-                            </Style>
-                        </ListView.Resources>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <kernel:PushBindingManager.PushBindings>
+                                    <kernel:PushBinding TargetProperty="ActualHeight" Path="BrushContainerHeight" Converter="{StaticResource DoubleToIntValueConverter}"/>
+                                </kernel:PushBindingManager.PushBindings>
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
 
-                    </ListView>
-                </ScrollViewer>
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}"></Setter>
+                            <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"></Setter>
+                            <Setter Property="Width" Value="{Binding ElementName=ColorListView, Path=DataContext.(viewModel:PaintViewModel.BrushWidth)}"></Setter>
+                            <Setter Property="Height" Value="{Binding ElementName=ColorListView, Path=DataContext.(viewModel:PaintViewModel.BrushHeight)}"/>
+                        </Style>
+                    </ListView.Resources>
+
+                </ListView>
 
             </Grid>
 

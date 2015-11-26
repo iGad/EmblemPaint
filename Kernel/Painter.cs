@@ -9,40 +9,50 @@ namespace EmblemPaint.Kernel
     public class Painter
     {
         public const int BytesPerPixel = 4;
-        private WriteableBitmap patternImage;
+        private const int EqualtionConcurancy = 20;
+        private WriteableBitmap filledImage;
         private readonly int sourceWidth, sourceHeight, stride;
         private readonly byte[] sourceImageBytes, patternImageBytes;
 
-        public Painter(WriteableBitmap patternImage, BitmapSource sourceImage)
+        public Painter(WriteableBitmap filledImage, BitmapSource sourceImage)
         {
-            this.patternImage = patternImage;
+            this.filledImage = filledImage;
             SourceImage = sourceImage;
             this.sourceWidth = sourceImage.PixelWidth;
             this.sourceHeight = sourceImage.PixelHeight;
             this.stride = this.sourceWidth*BytesPerPixel;
             this.sourceImageBytes = sourceImage.GetBytes();
-            //new byte[this.sourceHeight*this.stride];
-            //sourceImage.CopyPixels(this.sourceImageBytes, this.stride, 0);
-            this.patternImageBytes = patternImage.GetBytes();//new byte[this.sourceHeight * this.stride];
-            //patternImage.CopyPixels(this.patternImageBytes, this.stride, 0);
+            this.patternImageBytes = filledImage.GetBytes();
         }
-
-        public WriteableBitmap PatternImage
+        
+        /// <summary>
+        /// Заполненное пользователем изображение текущего герба
+        /// </summary>
+        public WriteableBitmap FilledImage
         {
             get
             {
-                return this.patternImage;
+                return this.filledImage;
             }
             set
             {
-                this.patternImage = value;
-                if(this.patternImage.CanFreeze)
-                    this.patternImage.Freeze();
+                this.filledImage = value;
+                if(this.filledImage.CanFreeze)
+                    this.filledImage.Freeze();
             }
         }
 
-        public BitmapSource SourceImage { get; }
+        /// <summary>
+        /// Идеальное изображение текущего герба
+        /// </summary>
+        public BitmapSource SourceImage { get; private set; }
 
+        /// <summary>
+        /// Закрасить все точки шаблона, цвета точки на идеальном изображении, указанным цветом
+        /// </summary>
+        /// <param name="startPoint"></param>
+        /// <param name="fillingColor"></param>
+        /// <returns></returns>
         public WriteableBitmap FillImage(Point startPoint, Color fillingColor)
         {
             if (IsPointInvalid(startPoint))
@@ -52,13 +62,13 @@ namespace EmblemPaint.Kernel
             
             Color defaultColor = GetSourceColor((int) startPoint.X, (int) startPoint.Y);
             FillPixels(defaultColor, fillingColor);
-            WriteableBitmap filledImage = new WriteableBitmap(PatternImage.Clone());
-            filledImage.WritePixels(new Int32Rect(0, 0, this.sourceWidth, this.sourceHeight), this.patternImageBytes, this.stride, 0);
-            PatternImage = filledImage;
-            return PatternImage;
+            WriteableBitmap image = new WriteableBitmap(FilledImage.Clone());
+            image.WritePixels(new Int32Rect(0, 0, this.sourceWidth, this.sourceHeight), this.patternImageBytes, this.stride, 0);
+            FilledImage = image;
+            return FilledImage;
         }
 
-        private Color GetSourceColor(int x, int y)
+        internal Color GetSourceColor(int x, int y)
         {
             int index = this.stride * y + BytesPerPixel * x;
             return Color.FromArgb(this.sourceImageBytes[index + 3],
@@ -67,43 +77,16 @@ namespace EmblemPaint.Kernel
                 this.sourceImageBytes[index]);
         }
 
-
-        internal Color GetSourceImageColorByCoordinate(int x, int y)
+        internal void FillPixel(WriteableBitmap fillingImage, int x, int y, Color fillingColor)
         {
-            int index = this.stride * y + BytesPerPixel * x;
-            return Color.FromArgb(this.sourceImageBytes[index + 3],
-                this.sourceImageBytes[index + 2],
-                this.sourceImageBytes[index + 1],
-                this.sourceImageBytes[index]);
-        }
-
-        internal void FillImage(Color defaultColor, Color fillingColor)
-        {
-            WriteableBitmap filledImage = new WriteableBitmap(PatternImage.Clone());
-            for (int i = 0; i < this.sourceWidth; i++)
-            {
-                for (int j = 0; j < this.sourceHeight; j++)
-                {
-                    if (IsPixelHasExpectedColor(i, j, defaultColor))
-                    {
-                        FillPixel(filledImage, i, j, fillingColor);
-                    }
-                }
-            }
-            PatternImage = new WriteableBitmap(filledImage);
-        }
-
-        internal void FillPixel(WriteableBitmap filledImage, int x, int y, Color fillingColor)
-        {
-            byte[] filledPixel = new[] {fillingColor.R, fillingColor.G, fillingColor.B, fillingColor.A};
-            int offset = y * this.stride + 4 * x;
+            byte[] filledPixel = {fillingColor.R, fillingColor.G, fillingColor.B, fillingColor.A};
             var rect = new Int32Rect(x, y, 1, 1);
-            filledImage.WritePixels(rect, filledPixel, this.stride, 0);
+            fillingImage.WritePixels(rect, filledPixel, this.stride, 0);
         }
 
         internal bool IsPixelHasExpectedColor(int x, int y, Color defaultColor)
         {
-            int pixelIndex = y*this.stride +4*x;
+            int pixelIndex = y*this.stride + 4*x;
             return IsPixelHasExpectedColor(pixelIndex, defaultColor);
         }
 
@@ -121,9 +104,8 @@ namespace EmblemPaint.Kernel
         }
 
         /// <summary>
-        /// 
+        /// Замена всех пикселей первого цвета, на второй цвет
         /// </summary>
-        /// <param name="pixels">Пиксели всего PatternImage</param>
         /// <param name="defaultColor"></param>
         /// <param name="fillingColor"></param>
         private void FillPixels(Color defaultColor, Color fillingColor)
@@ -132,8 +114,6 @@ namespace EmblemPaint.Kernel
             Parallel.For(0, this.sourceHeight, po, i => FillLine(i, defaultColor,fillingColor));
         }
         
-        
-
         private void FillLine(int index, Color defaultColor, Color fillingColor)
         {
             for (var i = 0; i < this.sourceWidth; i++)
@@ -157,38 +137,31 @@ namespace EmblemPaint.Kernel
         {
             int colorPixelCount = 0;
             int matchColorPixelCount = 0;
-            var po = new ParallelOptions {MaxDegreeOfParallelism = 4};
-            Parallel.For(0, SourceImage.PixelHeight*SourceImage.PixelWidth, po, (i) =>
+            int count = SourceImage.PixelHeight*SourceImage.PixelWidth;
+            for (int i=0; i < count; i++)
             {
-                if (IsColorPixel(i))
+                byte[] pixel = new byte[4];
+                int index = i*4;
+                Array.Copy(this.sourceImageBytes, index, pixel, 0, 4);
+                if (Utilities.IsColorPixelStrong(pixel))
                 {
                     colorPixelCount++;
-                    if (IsPixelsEquals(i))
+                    if (IsPixelsEquals(index))
                     {
                         matchColorPixelCount++;
                     }
                 }
-            });
-            return Convert.ToInt32(matchColorPixelCount*100/(double) colorPixelCount);
+            }
+            return Convert.ToInt32(Math.Round(matchColorPixelCount/(double) colorPixelCount, 2)*100);
         }
-
-        private bool IsColorPixel(int sourceImagePixelIndex)
-        {
-            return (this.sourceImageBytes[sourceImagePixelIndex] <= 250 ||
-                   this.sourceImageBytes[sourceImagePixelIndex + 1] <= 250 ||
-                   this.sourceImageBytes[sourceImagePixelIndex + 2] <= 250) &&
-                   this.sourceImageBytes[sourceImagePixelIndex + 3] > 0 &&
-                   this.sourceImageBytes[sourceImagePixelIndex] > 0 &&
-                   this.sourceImageBytes[sourceImagePixelIndex + 1] > 0 &&
-                   this.sourceImageBytes[sourceImagePixelIndex + 2] > 0;
-        }
+        
 
         private bool IsPixelsEquals(int pixelIndex)
         {
-            return Math.Abs(this.sourceImageBytes[pixelIndex] - this.patternImageBytes[pixelIndex]) <= 5 &&
-                   Math.Abs(this.sourceImageBytes[pixelIndex + 1] - this.patternImageBytes[pixelIndex + 1]) <= 5 &&
-                   Math.Abs(this.sourceImageBytes[pixelIndex + 2] - this.patternImageBytes[pixelIndex + 2]) <= 5 &&
-                   Math.Abs(this.sourceImageBytes[pixelIndex + 3] - this.patternImageBytes[pixelIndex + 3]) <= 5;
+            return Math.Abs(this.sourceImageBytes[pixelIndex] - this.patternImageBytes[pixelIndex]) <= EqualtionConcurancy &&
+                   Math.Abs(this.sourceImageBytes[pixelIndex + 1] - this.patternImageBytes[pixelIndex + 1]) <= EqualtionConcurancy &&
+                   Math.Abs(this.sourceImageBytes[pixelIndex + 2] - this.patternImageBytes[pixelIndex + 2]) <= EqualtionConcurancy &&
+                   Math.Abs(this.sourceImageBytes[pixelIndex + 3] - this.patternImageBytes[pixelIndex + 3]) <= EqualtionConcurancy;
         }
     }
 }

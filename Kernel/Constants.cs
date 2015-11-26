@@ -15,16 +15,17 @@ namespace EmblemPaint.Kernel
         public static readonly Color BorderColor = Color.FromRgb(186, 186, 186);
         public static readonly Color DarkBackColor = Color.FromRgb(179, 179, 179);
         public static readonly Color DarkBackBorderColor = Color.FromRgb(126, 126, 126);
-        public static readonly IReadOnlyCollection<FillingColor> DefaultColors = 
-            new ReadOnlyCollection<FillingColor>(new List<FillingColor>
+        public static readonly IReadOnlyCollection<Color> ByDefaultColors =
+            new ReadOnlyCollection<Color>(new List<Color>
             {
-                new FillingColor("Red","RedBrush","RedBrush.png"),
-                new FillingColor("Green", "GreenBrush", "GreenBrush.png"),
-                new FillingColor("Blue", "BlueBrush", "BlueBrush.png"),
-                new FillingColor("DarkOrange", "DarkOrangeBrush", "DarkOrangeBrush.png"),
-                new FillingColor("Yellow", "YellowBrush", "YellowBrush.png"),
-                new FillingColor("Aqua", "AquaBrush", "AquaBrush.png"),
-                new FillingColor("Chartreuse", "ChartreuseBrush", "ChartreuseBrush.png")
-            }); 
+                Colors.Red,
+                Colors.Green,
+                Colors.Blue,
+                Colors.DarkOrange,
+                Colors.Yellow,
+                Colors.Aqua,
+                Colors.Chartreuse,
+                Colors.BlueViolet
+            });
     }
 }

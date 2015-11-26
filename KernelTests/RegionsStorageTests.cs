@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Media;
 using EmblemPaint.Kernel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -187,5 +188,68 @@ namespace KernelTests
             Assert.IsTrue(File.Exists("TestStorage.xml"));
         }
 
+        [TestMethod]
+        public void GetColorsForImage_ByDefault_ReturnExpectedValue()
+        {
+            var filePath = Path.Combine(TestHelper.TestRegionFolder, "region2_ideal.png");
+            var expectedColorsCount = 4;
+
+            var colors = RegionsStorage.GetColorsForImage(filePath);
+
+            Assert.AreEqual(expectedColorsCount, colors.Count);
+        }
+
+        [TestMethod]
+        public void GetColorsForImage_WhenFileNotExists_ExceptionExpected()
+        {
+            TestHelper.Catch<FileNotFoundException>(()=>RegionsStorage.GetColorsForImage("aaaaaasdaf.fsad"));
+        }
+
+        [TestMethod]
+        public void AppendColors_WhenColorsFromConstants_Successfully()
+        {
+            var colors = Constants.ByDefaultColors.Take(5).Select(c => new FillingColor {HexArgbColor = c.ToHexString()}).ToList();
+
+            RegionsStorage.AppendColors(colors);
+
+            Assert.AreEqual(7, colors.Count);
+        }
+
+        [TestMethod]
+        public void AppendColors_WhenColorsFromConstants_AppendExpectedColors()
+        {
+            var colors = Constants.ByDefaultColors.Take(5).Select(c => new FillingColor { HexArgbColor = c.ToHexString() }).ToList();
+
+            RegionsStorage.AppendColors(colors);
+
+            Assert.IsTrue(colors[5].Color.Equals(Constants.ByDefaultColors.ElementAt(5)) &&
+                          colors[6].Color.Equals(Constants.ByDefaultColors.ElementAt(6)));
+        }
+
+        [TestMethod]
+        public void GenerateColorsForImage_ByDefault_ReturnExpectedColors()
+        {
+            var filePath = Path.Combine(TestHelper.TestRegionFolder, "region2_ideal.png");
+
+            var colors = RegionsStorage.GenerateColorsForImage(filePath);
+
+            Assert.IsTrue(IsColorsExpected(colors));
+        }
+
+        private bool IsColorsExpected(List<FillingColor> colors)
+        {
+            var expectedColors = new []
+            {
+                Color.FromArgb(245, 110, 214, 97),
+                Color.FromArgb(255, 0, 0, 252),
+                Color.FromArgb(255, 238, 0, 252),
+                Color.FromArgb(255, 252, 244, 0),
+                Color.FromArgb(255, 255, 0, 0),
+                Color.FromArgb(255, 0, 128, 0),
+                Color.FromArgb(255, 255, 140, 0)
+            };
+            var colorList = colors.Select(color => color.Color);
+            return colorList.SequenceEqual(expectedColors);
+        }
     }
 }

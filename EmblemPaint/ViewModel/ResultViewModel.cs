@@ -5,38 +5,60 @@ namespace EmblemPaint.ViewModel
 {
     public class ResultViewModel:FunctionalViewModel  
     {
-        public ResultViewModel(BitmapSource resultImage, BitmapSource sourceImage, int resultPercents, Configuration configuration):base(configuration)
+        public ResultViewModel(Configuration configuration):base(configuration)
         {
-            ResultImage = resultImage;
-            SourceImage = sourceImage;
-            Result = resultPercents + "%";
-            FillingAngle = resultPercents*Math.PI/50;
-            StartAngle = Math.PI + (2*Math.PI - FillingAngle);
+            if (configuration.Painter != null)
+            {
+                Update();
+            }
         }
 
         /// <summary>
         /// Расскрашенное изображение
         /// </summary>
-        public BitmapSource ResultImage { get; }
+        public BitmapSource ResultImage { get; private set; }
 
         /// <summary>
         /// Исходное изображение
         /// </summary>
-        public BitmapSource SourceImage { get; }
+        public BitmapSource SourceImage { get; private set; }
 
         /// <summary>
         /// Процент совпадения
         /// </summary>
-        public string Result { get; }
+        public string Result { get; private set; }
 
         /// <summary>
-        /// Сообщение пользователю
+        /// Описание герба
         /// </summary>
-        public string Congratulation { get; }
+        public string Description { get; private set; }
         
-        public double StartAngle { get; }
+        /// <summary>
+        /// Начальный угол индикатора
+        /// </summary>
+        public double StartAngle { get; private set; }
 
-        public double FillingAngle { get; }
+        /// <summary>
+        /// Заполненный угол индикатора
+        /// </summary>
+        public double FillingAngle { get; private set; }
 
+
+        public override void Reconfigure(Configuration newConfig)
+        {
+            base.Reconfigure(newConfig);
+            Update();
+        }
+
+        private void Update()
+        {
+            ResultImage = Configuration.Painter.FilledImage;
+            SourceImage = Configuration.Painter.SourceImage;
+            Description = Configuration.SelectedRegion.Description;
+            var persents = Configuration.Painter.CalculateFillAccuracy();
+            Result = persents + "%";
+            FillingAngle = persents * Math.PI / 50;
+            StartAngle = Math.PI + (2 * Math.PI - FillingAngle);
+        }
     }
 }

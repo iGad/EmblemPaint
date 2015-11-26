@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="View/ResultViewTemplate.xaml"/>
                 <ResourceDictionary Source="View/ScreensaverTemplate.xaml"/>
                 <ResourceDictionary Source="View/SelectRegionTemplate.xaml"/>
+                <ResourceDictionary Source="View/SendEmailView.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="TextBlock">
                 <Setter Property="HorizontalAlignment" Value="Center"/>

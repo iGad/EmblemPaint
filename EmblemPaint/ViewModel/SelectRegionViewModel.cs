@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using EmblemPaint.Kernel;
@@ -29,6 +30,7 @@ namespace EmblemPaint.ViewModel
 
             ComputeItemsSize();
             FillRegions(configuration.Storage.Regions);
+            SelectedRegion = Regions.FirstOrDefault();
             MoveToLeftCommand = new DelegateCommand(MoveToLeft);
             MoveToRightCommand = new DelegateCommand(MoveToRight);
         }
@@ -52,10 +54,16 @@ namespace EmblemPaint.ViewModel
             get { return this.selectedRegion; }
             set
             {
-                this.selectedRegion = value;
-                OnPropertyChanged(nameof(SelectedRegion));
-                Configuration.SelectedRegion = this.selectedRegion.Region;
-                Dispatcher.CurrentDispatcher.Invoke(() => NextCommand.RaiseCanExecuteChanged());
+                if (this.selectedRegion != value)
+                {
+                    this.selectedRegion = value;
+                    OnPropertyChanged(nameof(SelectedRegion));
+                    if (SelectedRegion != null)
+                    {
+                        Configuration.SelectedRegion = this.selectedRegion.Region;
+                    }
+                    Dispatcher.CurrentDispatcher.Invoke(() => NextCommand.RaiseCanExecuteChanged());
+                }
             }
         }
 
@@ -223,7 +231,7 @@ namespace EmblemPaint.ViewModel
             }
             else
             {
-                HorizontalOffset -= this.increment;
+                HorizontalOffset -= VisibleWidth;  //this.increment;
             }
         }
         
@@ -236,20 +244,13 @@ namespace EmblemPaint.ViewModel
             }
             else
             {
-                HorizontalOffset += this.increment;
+                HorizontalOffset += VisibleWidth; //this.increment;
             }
         }
 
         #endregion
 
-
-        private void FillRegionsTest(int count)
-        {
-            for(int i=0;i< count;i++)
-            {
-                Regions.Add(new RegionViewModel(new Region("Region " + i)));
-            }
-        }
+        
         #region Overrides
         
         /// <summary>
@@ -260,7 +261,7 @@ namespace EmblemPaint.ViewModel
         {
             return SelectedRegion != null;
         }
-        
+
         #endregion
     }
 }

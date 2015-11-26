@@ -61,6 +61,16 @@ namespace EmblemPaint {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap EmptyBrush {
+            get {
+                object obj = ResourceManager.GetObject("EmptyBrush", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loren ipsum dolor.\nConectetur adipisicing elit..
         /// </summary>
         internal static string ScreensaverTitle {

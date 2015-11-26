@@ -3,7 +3,7 @@ using System.Windows;
 using EmblemPaint.Kernel;
 using Microsoft.Practices.Prism.Commands;
 
-namespace EmblemPaint.ViewModel
+namespace EmblemPaint
 {
     public abstract class FunctionalViewModel : Kernel.ViewModel
     {
@@ -18,7 +18,10 @@ namespace EmblemPaint.ViewModel
             ActionHappened += OnActionHappened;
         }
 
-        protected Configuration Configuration { get; set; }
+        /// <summary>
+        /// Настраиваемая конфигурация окон
+        /// </summary>
+        internal Configuration Configuration { get; set; }
 
         #region Commands
 
