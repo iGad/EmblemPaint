@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -29,7 +30,7 @@ namespace KernelTests
         /// Получить тестовое заполненное изображение
         /// </summary>
         /// <returns>Изображение, состоящее из 25 пикселей, 4 из которых красные, 4 синие, 4 зеленые и 4 белые и 9 черных (сетка, между ячейками черные полосы в 1 пиксель)</returns>
-        private BitmapSource GetTestSourceImage()
+        private BitmapImage GetTestSourceImage()
         {
             //WriteableBitmap result = new WriteableBitmap(5,5,72,72,PixelFormats.Bgra32, new BitmapPalette(this.testColors));
             int stride = 20;
@@ -63,7 +64,12 @@ namespace KernelTests
             Array.Copy(middleLine, 0, imageBytes, stride*2, stride);
             Array.Copy(lastLine, 0, imageBytes, stride*3, stride);
             Array.Copy(lastLine, 0, imageBytes, stride*4, stride);
-            return BitmapSource.Create(5, 5, 96, 96, PixelFormats.Bgra32, new BitmapPalette(this.testColors), imageBytes, stride);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.StreamSource = new MemoryStream(BitmapSource.Create(5, 5, 96, 96, PixelFormats.Bgra32, new BitmapPalette(this.testColors), imageBytes, stride).GetBytes());
+            bitmap.EndInit();
+            return bitmap;
+            //return ;
         }
 
         /// <summary>

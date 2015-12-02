@@ -149,4 +149,7 @@ namespace EmblemPaint.Kernel
     {
 
     }
+
+    public class MouseWheelEventToCommandMap : EventToCommandMapBase<MouseWheelEventArgs>
+    { }
 }

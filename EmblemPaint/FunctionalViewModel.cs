@@ -7,7 +7,6 @@ namespace EmblemPaint
 {
     public abstract class FunctionalViewModel : Kernel.ViewModel
     {
-
         protected FunctionalViewModel(Configuration configuration)
         {
             Configuration = configuration;
@@ -21,7 +20,7 @@ namespace EmblemPaint
         /// <summary>
         /// Настраиваемая конфигурация окон
         /// </summary>
-        internal Configuration Configuration { get; set; }
+        protected internal Configuration Configuration { get; set; }
 
         #region Commands
 

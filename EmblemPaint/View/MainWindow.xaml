@@ -10,10 +10,22 @@
         x:Name="Window" 
         Height="{Binding Path=WindowHeight}" 
         Width="{Binding Path=WindowWidth}"
-        Topmost="False" WindowStyle="None" WindowStartupLocation="CenterScreen"> <!--WindowState="Maximized"-->
+        Topmost="False" WindowStyle="None" WindowStartupLocation="CenterScreen" WindowState="Maximized"> <!---->
     <Window.Resources>
         <kernel:DoubleToIntValueConverter x:Key="DoubleToIntValueConverter"/>
+        
     </Window.Resources>
+    <!--<Window.Triggers>
+        <EventTrigger RoutedEvent="Button.Click">
+            <EventTrigger.Actions>
+                <BeginStoryboard>
+                    <Storyboard>
+                        <MediaTimeline Storyboard.TargetName="MediaElement" Source="../Sounds/Button.wav"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger.Actions>
+        </EventTrigger>
+    </Window.Triggers>-->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="MouseMove">
             <kernel:RoutedEventToCommandMap Command="{Binding Path=(viewModel:WindowDispatcher.ActionCommand)}"/>
@@ -26,5 +38,8 @@
         <kernel:PushBinding TargetProperty="ActualWidth" Path="WindowWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
         <kernel:PushBinding TargetProperty="ActualHeight" Path="WindowHeight" Converter="{StaticResource DoubleToIntValueConverter}"/>
     </kernel:PushBindingManager.PushBindings>
-    <ContentPresenter Content="{Binding Path=(viewModel:WindowDispatcher.ActiveModel)}" />
+    <Grid>
+        
+        <ContentPresenter Content="{Binding Path=(viewModel:WindowDispatcher.ActiveModel)}" />
+    </Grid>
 </Window>

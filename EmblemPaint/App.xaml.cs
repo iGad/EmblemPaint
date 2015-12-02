@@ -12,14 +12,40 @@ namespace EmblemPaint
     /// </summary>
     public partial class App
     {
+        
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            bool exit = false;
+
             Configuration configuration = LoadConfiguration();
-            
-            var windowDispatcher = new WindowDispatcher(configuration, CreateViewModels(configuration));
-            var mainWindow = new MainWindow {DataContext = windowDispatcher};
-            mainWindow.Show();
+            if (configuration.ModifyMode)
+            {
+                PrepareRegions(configuration);
+            }
+            while (!exit)
+            {
+                try
+                {
+
+                    var windowDispatcher = new WindowDispatcher(configuration, CreateViewModels(configuration));
+                    var mainWindow = new MainWindow {DataContext = windowDispatcher};
+                    mainWindow.Show();
+                    exit = true;
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        private void PrepareRegions(Configuration configuration)
+        {
+            foreach (var region in configuration.Storage.Regions)
+            {
+                region.ThumbnailImageName = region.SourceImageName;
+            }
         }
 
         private Configuration LoadConfiguration()
@@ -41,14 +67,37 @@ namespace EmblemPaint
 
         private IList<FunctionalViewModel> CreateViewModels(Configuration configuration)
         {
-            return new List<FunctionalViewModel>(6)
+            if (configuration.ModifyMode)
             {
-                new ScreensaverViewModel(configuration),
-                new SelectRegionViewModel(configuration),
-                new PaintViewModel(configuration),
-                new ResultViewModel(configuration),
-                new SendEmailViewModel(configuration)
-            };
-        } 
+
+                var list = new List<FunctionalViewModel>(3)
+                {
+                    new SelectRegionViewModel(configuration),
+                    new ModifyRegionViewModel(configuration)
+                };
+                if (!configuration.UseConfigFile)
+                {
+                    list.Insert(0, new SelectFolderViewModel(configuration));
+                }
+                else
+                {
+                    list[0].Reconfigure(configuration);
+                }
+                return list;
+            }
+            else
+            {
+                return new List<FunctionalViewModel>(6)
+                {
+                    new ScreensaverViewModel(configuration),
+                    new SelectRegionViewModel(configuration),
+                    new PaintViewModel(configuration),
+                    new ResultViewModel(configuration),
+                    new SendEmailViewModel(configuration)
+                };
+            }
+            
+            
+        }
     }
 }

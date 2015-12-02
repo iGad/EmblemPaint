@@ -1,0 +1,23 @@
+﻿<Window x:Class="EmblemPaint.ImageGenerator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:EmblemPaint.ViewModel;assembly=EmblemPaint"
+        mc:Ignorable="d"
+        Title="Подготовка изображений" Height="350" Width="525">
+   
+    <DockPanel>
+        <!--<DockPanel DockPanel.Dock="Top" Height="60">
+            <Grid x:Name="HomeButtonGrid"  Width="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ActualHeight}">
+                <Button/>
+            </Grid>
+            <Grid Background="White">
+                
+            </Grid>
+        </DockPanel>-->
+        <ContentPresenter DockPanel.Dock="Bottom" Content="{Binding Path=(viewModel:WindowDispatcher.ActiveModel)}">
+            
+        </ContentPresenter>
+    </DockPanel>
+</Window>

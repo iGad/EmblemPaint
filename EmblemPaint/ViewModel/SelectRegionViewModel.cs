@@ -29,8 +29,7 @@ namespace EmblemPaint.ViewModel
            
 
             ComputeItemsSize();
-            FillRegions(configuration.Storage.Regions);
-            SelectedRegion = Regions.FirstOrDefault();
+            Update();
             MoveToLeftCommand = new DelegateCommand(MoveToLeft);
             MoveToRightCommand = new DelegateCommand(MoveToRight);
         }
@@ -39,6 +38,7 @@ namespace EmblemPaint.ViewModel
 
         private void FillRegions(IEnumerable<Region> regions)
         {
+            Regions.Clear();
             foreach (var region in regions)
             {
                 Regions.Add(new RegionViewModel(region));
@@ -46,7 +46,7 @@ namespace EmblemPaint.ViewModel
         }
 
         #region Properties
-
+        
         public ObservableCollection<RegionViewModel> Regions { get; } = new ObservableCollection<RegionViewModel>();
 
         public RegionViewModel SelectedRegion
@@ -56,13 +56,15 @@ namespace EmblemPaint.ViewModel
             {
                 if (this.selectedRegion != value)
                 {
-                    this.selectedRegion = value;
+                    //this.selectedRegion = value;
                     OnPropertyChanged(nameof(SelectedRegion));
-                    if (SelectedRegion != null)
+                    if (value != null)
                     {
-                        Configuration.SelectedRegion = this.selectedRegion.Region;
+                        Configuration.SelectedRegion = value.Region;
+                        Next();
                     }
                     Dispatcher.CurrentDispatcher.Invoke(() => NextCommand.RaiseCanExecuteChanged());
+                    
                 }
             }
         }
@@ -192,10 +194,10 @@ namespace EmblemPaint.ViewModel
 
         private void ComputeItemsSize()
         {
-            ItemHeight = AllHeight/this.VerticalItemsCount - Margin.Top*4 - 7;
-            ItemWidth = VisibleWidth/this.HorizontalItemsCount - Margin.Left *2 - 8;
-           
-            this.increment = ItemWidth + this.Margin.Left*2 + 6;
+            ItemHeight = AllHeight/this.VerticalItemsCount - this.VerticalItemsCount;// - Margin.Top*4
+            ItemWidth = Math.Round(VisibleWidth/this.HorizontalItemsCount, 0);// - this.HorizontalItemsCount;// - 8;// - Margin.Left *2
+
+            this.increment = VisibleWidth;
         }
 
       
@@ -231,7 +233,7 @@ namespace EmblemPaint.ViewModel
             }
             else
             {
-                HorizontalOffset -= VisibleWidth;  //this.increment;
+                HorizontalOffset -= this.increment;
             }
         }
         
@@ -244,7 +246,7 @@ namespace EmblemPaint.ViewModel
             }
             else
             {
-                HorizontalOffset += VisibleWidth; //this.increment;
+                HorizontalOffset += this.increment;
             }
         }
 
@@ -260,6 +262,22 @@ namespace EmblemPaint.ViewModel
         protected override bool CanExecuteNextCommand()
         {
             return SelectedRegion != null;
+        }
+
+        public override void Reconfigure(Configuration newConfig)
+        {
+            base.Reconfigure(newConfig);
+            Update();
+        }
+
+        private void Update()
+        {
+            FillRegions(Configuration.Storage.Regions);
+            if (Regions.Any())
+            {
+                Configuration.SelectedRegion = Regions.First().Region;
+            }
+            //SelectedRegion = Regions.FirstOrDefault();
         }
 
         #endregion

@@ -9,7 +9,7 @@ using EmblemPaint.Kernel;
 namespace EmblemPaint
 {
     [Serializable]
-    public class Configuration
+    public class Configuration : IConfiguration
     {
         public Configuration()
         {
@@ -18,6 +18,18 @@ namespace EmblemPaint
         }
 
         #region Properties
+
+        /// <summary>
+        /// Режим изменения информации о регионах
+        /// </summary>
+
+        public bool ModifyMode { get; set; } = false;
+
+        /// <summary>
+        /// Использовать файл конфигурации для изменения информации о регионах
+        /// </summary>
+
+        public bool UseConfigFile { get; set; } = true;
 
         /// <summary>
         /// Количество элементов в выборе региона по горизонтали
@@ -142,7 +154,10 @@ namespace EmblemPaint
             try
             {
                 XmlSerializer serializer = new XmlSerializer(typeof (Configuration));
-                return (Configuration) serializer.Deserialize(stream);
+                var configuration = (Configuration) serializer.Deserialize(stream);
+                Region comparer = new Region();
+                configuration.Storage.Regions.Sort(comparer);
+                return configuration;
             }
             catch
             {

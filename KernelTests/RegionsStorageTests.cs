@@ -210,7 +210,7 @@ namespace KernelTests
         {
             var colors = Constants.ByDefaultColors.Take(5).Select(c => new FillingColor {HexArgbColor = c.ToHexString()}).ToList();
 
-            RegionsStorage.AppendColors(colors);
+            Utilities.AppendColors(colors);
 
             Assert.AreEqual(7, colors.Count);
         }
@@ -220,7 +220,7 @@ namespace KernelTests
         {
             var colors = Constants.ByDefaultColors.Take(5).Select(c => new FillingColor { HexArgbColor = c.ToHexString() }).ToList();
 
-            RegionsStorage.AppendColors(colors);
+            Utilities.AppendColors(colors);
 
             Assert.IsTrue(colors[5].Color.Equals(Constants.ByDefaultColors.ElementAt(5)) &&
                           colors[6].Color.Equals(Constants.ByDefaultColors.ElementAt(6)));

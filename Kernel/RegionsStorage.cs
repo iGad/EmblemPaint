@@ -105,7 +105,7 @@ namespace EmblemPaint.Kernel
 
             var localColors = GetColorsForImage(imagePath);
 
-            AppendColors(localColors);
+            Utilities.AppendColors(localColors);
 
             return localColors;
         }
@@ -123,7 +123,7 @@ namespace EmblemPaint.Kernel
             var count = imageBytes.Length / 4;
             var localColors = new List<FillingColor>();
 
-            for (int i = 0; i < count && localColors.Count < 10; i += 10)
+            for (int i = 0; i < count && localColors.Count < 20; i += 10)
             {
                 var pixel = new byte[4];
                 int index = i*4;
@@ -141,32 +141,11 @@ namespace EmblemPaint.Kernel
             return localColors;
         }
 
-        /// <summary>
-        /// Добавляет цвета для того, чтобы их количество в палитре стало равно 7
-        /// </summary>
-        /// <param name="colors">Список цветов из изображения</param>
-        internal static void AppendColors(IList<FillingColor> colors)
-        {
-            if (colors.Count >= 7)
-            {
-                return;
-            }
-            int i = 0;
-            while (colors.Count < 7 && i < Constants.ByDefaultColors.Count)
-            {
-                var minDifference = colors.Select(color => color.Color.DistanceTo(Constants.ByDefaultColors.ElementAt(i))).Min();
-                if (minDifference > 100)
-                {
-                    colors.Add(new FillingColor {HexArgbColor = Constants.ByDefaultColors.ElementAt(i).ToHexString()});
-                }
-                i++;
-            }
-        } 
+        
 
         public Region FindRegion(string name)
         {
             return Regions.FirstOrDefault(region => string.Equals(region.Name, name));
         }
-
     }
 }

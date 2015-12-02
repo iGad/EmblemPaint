@@ -78,6 +78,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -91,6 +92,10 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WriteableBitmapEx.Wpf, Version=1.5.0.0, Culture=neutral, PublicKeyToken=50375ca6144f1c69, processorArchitecture=MSIL">
+      <HintPath>..\packages\WriteableBitmapEx.1.5.0.0\lib\net40\WriteableBitmapEx.Wpf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Xceed.Wpf.AvalonDock, Version=2.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>..\packages\Extended.Wpf.Toolkit.2.5\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
       <Private>True</Private>
@@ -130,9 +135,12 @@
     </Compile>
     <Compile Include="ViewModel\CircleViewModel.cs" />
     <Compile Include="ViewModel\ColorViewModel.cs" />
+    <Compile Include="ViewModel\ModifyRegionViewModel.cs" />
     <Compile Include="ViewModel\PaintViewModel.cs" />
+    <Compile Include="ViewModel\RegionSettingsViewModel.cs" />
     <Compile Include="ViewModel\ResultViewModel.cs" />
     <Compile Include="ViewModel\ScreensaverViewModel.cs" />
+    <Compile Include="ViewModel\SelectFolderViewModel.cs" />
     <Compile Include="ViewModel\SelectRegionViewModel.cs" />
     <Compile Include="ViewModel\SendEmailViewModel.cs" />
     <Compile Include="ViewModel\WindowDispatcher.cs" />
@@ -166,11 +174,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="themes\generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ConfirmView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\ModifyRegionViewTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -181,6 +197,10 @@
     <Page Include="View\PleaseReturnView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\RegionSettingsViewTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ResultChart.xaml">
       <SubType>Designer</SubType>
@@ -197,6 +217,10 @@
     <Page Include="View\ScreensaverTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SelectFolderTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\SelectRegionTemplate.xaml">
       <SubType>Designer</SubType>
@@ -248,6 +272,10 @@
       <Project>{2475425b-74f8-4f56-94d0-e656765d1be1}</Project>
       <Name>Kernel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WpfKb\WpfKb.csproj">
+      <Project>{0784cdc9-0f52-4b8b-9488-6589c11e94e2}</Project>
+      <Name>WpfKb</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Home.png">
@@ -297,6 +325,17 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\logo.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Sounds\done.wav" />
+    <Content Include="Sounds\left.wav" />
+    <Content Include="Sounds\right.wav" />
+    <Content Include="Sounds\try_again_g.wav" />
+    <Resource Include="Images\ScreensaverBackground.png" />
+    <Resource Include="Images\PaintBackround.png" />
+    <Resource Include="Images\SelectRegionRegionsBackground.png" />
+    <Resource Include="Images\SelectRegionTextBackground.png" />
+    <Content Include="Sounds\Button.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -20,7 +20,6 @@ namespace EmblemPaint.ViewModel
         public WindowDispatcher(Configuration configuration, IList<FunctionalViewModel> models):base(configuration)
         {
             CloseCommand = new DelegateCommand(Close);
-            Configuration = configuration;
             WindowHeight = configuration.WindowHeight;
             WindowWidth = configuration.WindowWidth;
             this.timer = new Timer(configuration.WaitUserActionInterval * 1000);
@@ -31,6 +30,8 @@ namespace EmblemPaint.ViewModel
         }
 
         #region Properties
+
+        public new Configuration Configuration => base.Configuration as Configuration;
 
         /// <summary>
         /// Список моделей окон
@@ -133,8 +134,11 @@ namespace EmblemPaint.ViewModel
             int index = Models.IndexOf(ActiveModel);
             if (index > 0)
             {
-                Models[index - 1].Reconfigure(ActiveModel.Configuration);
-                ActiveModel = Models[index - 1];
+                if (AskUserConfirmation(true))
+                {
+                    Models[index - 1].Reconfigure(ActiveModel.Configuration);
+                    ActiveModel = Models[index - 1];
+                }
             }
         }
 

@@ -83,6 +83,13 @@ namespace EmblemPaint.Kernel
             return resultBitmap;
         }
 
+        public static void SaveImage(Stream stream, BitmapSource image)
+        {
+            PngBitmapEncoder encoder5 = new PngBitmapEncoder();
+            encoder5.Frames.Add(BitmapFrame.Create(image));
+            encoder5.Save(stream);
+        }
+
         /// <summary>
         /// Освободить поток, используемый изображением
         /// </summary>
@@ -158,6 +165,28 @@ namespace EmblemPaint.Kernel
                               bytes[2] <= 239) &&
                    (bytes[0] + bytes[1] + bytes[2] > 128) &&
                    (Math.Abs(bytes[0] - bytes[1]) + Math.Abs(bytes[0] - bytes[2]) + Math.Abs(bytes[1] - bytes[2]) > 12);
+        }
+
+        /// <summary>
+        /// Добавляет цвета для того, чтобы их количество в палитре стало равно 7
+        /// </summary>
+        /// <param name="colors">Список цветов из изображения</param>
+        public static void AppendColors(IList<FillingColor> colors)
+        {
+            if (colors.Count >= 7)
+            {
+                return;
+            }
+            int i = 0;
+            while (colors.Count < 7 && i < Constants.ByDefaultColors.Count)
+            {
+                var minDifference = colors.Select(color => color.Color.DistanceTo(Constants.ByDefaultColors.ElementAt(i))).Min();
+                if (minDifference > 100)
+                {
+                    colors.Add(new FillingColor { HexArgbColor = Constants.ByDefaultColors.ElementAt(i).ToHexString() });
+                }
+                i++;
+            }
         }
     }
 }

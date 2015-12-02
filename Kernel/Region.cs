@@ -1,16 +1,11 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmblemPaint.Kernel
 {
     [Serializable]
-    public class Region
+    public class Region : IComparer<Region>
     {
         /// <summary>
         /// Конструктор для сериализации
@@ -50,6 +45,16 @@ namespace EmblemPaint.Kernel
         /// <summary>
         /// Цвета для закраски
         /// </summary>
-        public List<FillingColor> Colors { get; set; }
+        public List<FillingColor> Colors { get; set; } = new List<FillingColor>();
+
+        public int Compare(Region x, Region y)
+        {
+            return x.Name.CompareTo(y.Name);
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

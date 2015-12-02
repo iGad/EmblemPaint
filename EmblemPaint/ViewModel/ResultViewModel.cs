@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Media.Imaging;
+using EmblemPaint.Kernel;
 
 namespace EmblemPaint.ViewModel
 {
@@ -42,7 +43,7 @@ namespace EmblemPaint.ViewModel
         /// Заполненный угол индикатора
         /// </summary>
         public double FillingAngle { get; private set; }
-
+        
 
         public override void Reconfigure(Configuration newConfig)
         {

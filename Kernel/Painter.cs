@@ -6,15 +6,15 @@ using System.Windows.Media.Imaging;
 
 namespace EmblemPaint.Kernel
 {
-    public class Painter
+    public class Painter : IDisposable
     {
         public const int BytesPerPixel = 4;
-        private const int EqualtionConcurancy = 20;
+        private const int EqualtionConcurancy = 1;
         private WriteableBitmap filledImage;
         private readonly int sourceWidth, sourceHeight, stride;
-        private readonly byte[] sourceImageBytes, patternImageBytes;
+        private readonly byte[] sourceImageBytes, patternImageBytes, sourcePatternImageBytes;
 
-        public Painter(WriteableBitmap filledImage, BitmapSource sourceImage)
+        public Painter(WriteableBitmap filledImage, BitmapImage sourceImage)
         {
             this.filledImage = filledImage;
             SourceImage = sourceImage;
@@ -22,7 +22,10 @@ namespace EmblemPaint.Kernel
             this.sourceHeight = sourceImage.PixelHeight;
             this.stride = this.sourceWidth*BytesPerPixel;
             this.sourceImageBytes = sourceImage.GetBytes();
+            
             this.patternImageBytes = filledImage.GetBytes();
+            this.sourcePatternImageBytes = new byte[this.patternImageBytes.Length];
+            this.patternImageBytes.CopyTo(this.sourcePatternImageBytes, 0);
         }
         
         /// <summary>
@@ -37,15 +40,13 @@ namespace EmblemPaint.Kernel
             set
             {
                 this.filledImage = value;
-                if(this.filledImage.CanFreeze)
-                    this.filledImage.Freeze();
             }
         }
 
         /// <summary>
         /// Идеальное изображение текущего герба
         /// </summary>
-        public BitmapSource SourceImage { get; private set; }
+        public BitmapImage SourceImage { get; private set; }
 
         /// <summary>
         /// Закрасить все точки шаблона, цвета точки на идеальном изображении, указанным цветом
@@ -55,13 +56,25 @@ namespace EmblemPaint.Kernel
         /// <returns></returns>
         public WriteableBitmap FillImage(Point startPoint, Color fillingColor)
         {
+            return FillImage(startPoint, fillingColor, 0.0);
+        }
+
+        /// <summary>
+        /// Закрасить все точки шаблона, цвета точки на идеальном изображении, указанным цветом
+        /// </summary>
+        /// <param name="startPoint"></param>
+        /// <param name="fillingColor"></param>
+        /// <param name="precision"></param>
+        /// <returns></returns>
+        public WriteableBitmap FillImage(Point startPoint, Color fillingColor, double precision)
+        {
             if (IsPointInvalid(startPoint))
             {
                 throw new ArgumentException("Wrong point coordinates");
             }
-            
-            Color defaultColor = GetSourceColor((int) startPoint.X, (int) startPoint.Y);
-            FillPixels(defaultColor, fillingColor);
+
+            Color defaultColor = GetSourceColor((int)startPoint.X, (int)startPoint.Y);
+            FillPixels(defaultColor, fillingColor, precision);
             WriteableBitmap image = new WriteableBitmap(FilledImage.Clone());
             image.WritePixels(new Int32Rect(0, 0, this.sourceWidth, this.sourceHeight), this.patternImageBytes, this.stride, 0);
             FilledImage = image;
@@ -84,19 +97,9 @@ namespace EmblemPaint.Kernel
             fillingImage.WritePixels(rect, filledPixel, this.stride, 0);
         }
 
-        internal bool IsPixelHasExpectedColor(int x, int y, Color defaultColor)
-        {
-            int pixelIndex = y*this.stride + 4*x;
-            return IsPixelHasExpectedColor(pixelIndex, defaultColor);
-        }
+        
 
-        private bool IsPixelHasExpectedColor(int index, Color defaultColor)
-        {
-            return (this.sourceImageBytes[index + 2] == defaultColor.R &&
-                   this.sourceImageBytes[index + 1] == defaultColor.G &&
-                   this.sourceImageBytes[index] == defaultColor.B &&
-                   this.sourceImageBytes[index + 3] == defaultColor.A);
-        }
+        
 
         private bool IsPointInvalid(Point startPoint)
         {
@@ -108,21 +111,36 @@ namespace EmblemPaint.Kernel
         /// </summary>
         /// <param name="defaultColor"></param>
         /// <param name="fillingColor"></param>
-        private void FillPixels(Color defaultColor, Color fillingColor)
+        /// <param name="precision"></param>
+        private void FillPixels(Color defaultColor, Color fillingColor, double precision)
         {
             ParallelOptions po = new ParallelOptions {MaxDegreeOfParallelism = 4};
-            Parallel.For(0, this.sourceHeight, po, i => FillLine(i, defaultColor,fillingColor));
+            Parallel.For(0, this.sourceHeight, po, i => FillLine(i, defaultColor, fillingColor, precision));
         }
         
-        private void FillLine(int index, Color defaultColor, Color fillingColor)
+        private void FillLine(int index, Color defaultColor, Color fillingColor, double precision)
         {
             for (var i = 0; i < this.sourceWidth; i++)
             {
-                if (IsPixelHasExpectedColor(i, index, defaultColor))
+                if (IsPixelHasExpectedColor(this.sourceImageBytes, i*4 + this.stride*index, defaultColor, precision))
                 {
-                    FillPixel(this.patternImageBytes, this.stride * index + i*BytesPerPixel, fillingColor);
+                    FillPixel(this.patternImageBytes, this.stride*index + i*BytesPerPixel, fillingColor);
                 }
             }
+        }
+
+        private bool IsPixelHasExpectedColor(byte[] array, int index, Color defaultColor, double precision)
+        {
+            Color color = Color.FromArgb(array[index + 3], array[index + 2], array[index + 1], array[index]);
+            return defaultColor.IsNearEqualTo(color, precision);
+            //return Math.Abs(array[index] - defaultColor.B) <= precision &&
+            //     Math.Abs(array[index + 1] - defaultColor.G) <= precision &&
+            //     Math.Abs(array[index + 2] - defaultColor.R) <= precision &&
+            //     Math.Abs(array[index + 3] - defaultColor.A) <= precision;
+            //return (array[index + 2] == defaultColor.R &&
+            //       array[index + 1] == defaultColor.G &&
+            //       array[index] == defaultColor.B &&
+            //       array[index + 3] == defaultColor.A);
         }
 
         private void FillPixel(byte[] pixels, int index, Color color)
@@ -140,13 +158,13 @@ namespace EmblemPaint.Kernel
             int count = SourceImage.PixelHeight*SourceImage.PixelWidth;
             for (int i=0; i < count; i++)
             {
-                byte[] pixel = new byte[4];
+                //byte[] pixel = new byte[4];
                 int index = i*4;
-                Array.Copy(this.sourceImageBytes, index, pixel, 0, 4);
-                if (Utilities.IsColorPixelStrong(pixel))
+                //Array.Copy(this.sourceImageBytes, index, pixel, 0, 4);
+                if (!IsPixelsEquals(index, this.sourceImageBytes, this.sourcePatternImageBytes))//IsColoringPixel(i))//(Utilities.IsColorPixelStrong(pixel))
                 {
                     colorPixelCount++;
-                    if (IsPixelsEquals(index))
+                    if (IsPixelsEquals(index, this.sourceImageBytes, this.patternImageBytes))
                     {
                         matchColorPixelCount++;
                     }
@@ -156,12 +174,43 @@ namespace EmblemPaint.Kernel
         }
         
 
-        private bool IsPixelsEquals(int pixelIndex)
+        private bool IsPixelsEquals(int pixelIndex, byte[] firstImage, byte[] secondImage)
         {
-            return Math.Abs(this.sourceImageBytes[pixelIndex] - this.patternImageBytes[pixelIndex]) <= EqualtionConcurancy &&
-                   Math.Abs(this.sourceImageBytes[pixelIndex + 1] - this.patternImageBytes[pixelIndex + 1]) <= EqualtionConcurancy &&
-                   Math.Abs(this.sourceImageBytes[pixelIndex + 2] - this.patternImageBytes[pixelIndex + 2]) <= EqualtionConcurancy &&
-                   Math.Abs(this.sourceImageBytes[pixelIndex + 3] - this.patternImageBytes[pixelIndex + 3]) <= EqualtionConcurancy;
+            return Math.Abs(firstImage[pixelIndex] - secondImage[pixelIndex]) <= EqualtionConcurancy &&
+                  Math.Abs(firstImage[pixelIndex + 1] - secondImage[pixelIndex + 1]) <= EqualtionConcurancy &&
+                  Math.Abs(firstImage[pixelIndex + 2] - secondImage[pixelIndex + 2]) <= EqualtionConcurancy &&
+                  Math.Abs(firstImage[pixelIndex + 3] - secondImage[pixelIndex + 3]) <= EqualtionConcurancy;
         }
+
+
+        #region overrides
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                DoDispose();
+            }
+        }
+
+        protected virtual void DoDispose()
+        {
+            Utilities.DisposeImage(SourceImage);
+
+        }
+
+        ~Painter()
+        {
+            Dispose(false);
+        }
+
+
+        #endregion
     }
 }

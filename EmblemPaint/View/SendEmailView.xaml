@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:EmblemPaint.View"
                     xmlns:viewModel="clr-namespace:EmblemPaint.ViewModel"
-                    xmlns:kernel="clr-namespace:EmblemPaint.Kernel;assembly=EmblemPaint.Kernel">
+                    xmlns:kernel="clr-namespace:EmblemPaint.Kernel;assembly=EmblemPaint.Kernel"
+                    xmlns:controls="clr-namespace:WpfKb.Controls;assembly=WpfKb">
     <DataTemplate DataType="{x:Type viewModel:SendEmailViewModel}">
         <Grid>
             <Grid.RowDefinitions>
@@ -35,8 +36,7 @@
             <Button Grid.Row="4" HorizontalAlignment="Center" Height="50" Width="400">
                 <TextBlock>ГОТОВО, ОТПРАВИТЬ</TextBlock></Button>
             <Grid  Grid.Row="5" >
-                
-
+                <controls:RusEngKeyboard/>
             </Grid>
         </Grid>
     </DataTemplate>

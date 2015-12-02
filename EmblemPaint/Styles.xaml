@@ -24,11 +24,11 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="ColorListItemBorderStyle" TargetType="Border">
-        <Setter Property="BorderBrush" Value="Transparent"/>
+    <Style x:Key="ColorListItemBorderStyle" TargetType="Ellipse">
+        <Setter Property="Stroke" Value="Transparent"/>
         <Style.Triggers>
             <DataTrigger Binding="{Binding Path=(kernel:ListViewItemModel.IsSelected)}" Value="True">
-                <Setter Property="BorderBrush" Value="#FFA1A1A1"></Setter>
+                <Setter Property="Stroke" Value="White"></Setter>
             </DataTrigger>
         </Style.Triggers>
     </Style>
@@ -64,21 +64,27 @@
                 </Style.Triggers>
             </Style>
         </Style.Resources>
-        <Setter Property="Width" Value="250"/>
-        <Setter Property="Height" Value="80"/>
+        <Setter Property="MaxHeight" Value="100"/>
         <Setter Property="Background" Value="White"/>
-        <Setter Property="BorderBrush" Value="#FFB3B3B3"/>
-        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border BorderThickness="{TemplateBinding BorderThickness}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="5">
-                        <ContentPresenter  VerticalAlignment="Center" 
+                            CornerRadius="45">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="4*"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <ContentPresenter Grid.Row="1" VerticalAlignment="Center" 
+                                          HorizontalAlignment="Stretch"
                                           Content="{TemplateBinding Content}" 
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"/><!--HorizontalAlignment="Center"-->
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                        </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -90,14 +96,20 @@
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Background" Value="#FFB3B3B3"></Setter>
             </Trigger>
+           <EventTrigger RoutedEvent="Click">
+               <EventTrigger.Actions>
+                    <SoundPlayerAction Source="Sounds/Button.wav"/>
+               </EventTrigger.Actions>
+           </EventTrigger>
         </Style.Triggers>
     </Style>
     
     <Style TargetType="TextBlock" x:Key="ListItemTextBlock">
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="Width" Value="150"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="TextAlignment" Value="Center"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="Text" Value="{Binding Path=(kernel:RegionViewModel.Name)}"></Setter>
     </Style>
     <system:Boolean x:Key="True">True</system:Boolean>

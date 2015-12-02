@@ -6,19 +6,184 @@
         xmlns:local="clr-namespace:EmblemPaint"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:kernel="clr-namespace:EmblemPaint.Kernel;assembly=EmblemPaint.Kernel"
+        xmlns:view="clr-namespace:EmblemPaint.View"
         mc:Ignorable="d"
         WindowStyle="None"
         ResizeMode="NoResize"
-        Title="WindowView" Height="900" Width="500">
-    <DockPanel>
-        <DockPanel DockPanel.Dock="Top">
-            <Grid x:Name="HomeButtonGrid"  Width="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ActualHeight}">
-                <Button Style="{StaticResource HomeButton}" CommandParameter="{StaticResource False}"/>
+        Title="WindowView" Height="1920" Width="1080">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="../Images/PaintBackround.png"/>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="0.75*"/>
+            <RowDefinition Height="0.75*"/>
+            <RowDefinition Height="0.5*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="13*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1" Column="1" Background="Transparent">
+            <Border CornerRadius="45" Background="White">
+                <Grid x:Name="Grid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="9*"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="10*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0" Source="{Binding Path=ResultImage}"></Image>
+                    <Image Grid.Column="2" Grid.Row="0" Source="{Binding Path=SourceImage}"></Image>
+                    <Viewbox Grid.Row="0" Grid.Column="1">
+                        <TextBlock  FontWeight="Bold" FontStyle="Italic">vs</TextBlock>
+                    </Viewbox>
+                    <Viewbox Grid.Row="1" Grid.Column="0">
+                        <TextBlock Foreground="#FFB3B3B3">Вы раскрасили</TextBlock>
+                    </Viewbox>
+                    <Viewbox Grid.Row="1" Grid.Column="2">
+                        <TextBlock  Foreground="#FFB3B3B3">Оригинал</TextBlock>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </Grid>
+        <Border Grid.Row="2" Grid.Column="1" Background="White" CornerRadius="45" Margin="0,15,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="3*"/>
+                </Grid.RowDefinitions>
+                <Grid>
+                    <!--<view:ResultChart 
+                    Width="200" 
+                    Height="200" 
+                    StrokeThikness="0" 
+                    BorderThickness="0" 
+                    Foreground="#b14f4a"
+                    StartAngle ="{Binding Path=StartAngle, Mode=OneWay}"
+                    FillingAngle ="{Binding Path=FillingAngle, Mode=OneWay}">
+                        <view:ResultChart.Effect>
+                            <DropShadowEffect BlurRadius="10" Color="#FFB3B3B3"/>
+                        </view:ResultChart.Effect>
+                    </view:ResultChart>-->
+                    <Ellipse Fill="#E0E5E5E5" Width="140" Height="140"/>
+                    <Viewbox Width="100">
+                        <TextBlock  Text="{Binding Path=Result}" Margin="0,-10,0,0" FontWeight="Bold" Foreground="#b14f4a"/>
+                    </Viewbox>
+                    <TextBlock Text="Совпадений" Foreground="#FFA5A28E" Margin="0,30,0,0" FontSize="16"/>
+
+
+                </Grid>
+                <Viewbox Grid.Row="1">
+                    <TextBlock HorizontalAlignment="Stretch" 
+                               Text="{Binding Description}"  
+                               Width="150"/>
+                </Viewbox>
             </Grid>
-            <Grid Background="#FF979797">
-                
+            
+        </Border>
+
+        <Button Grid.Row="3" Grid.Column="1" Command="{Binding HomeCommand}">
+            <Viewbox>
+                <TextBlock>Попробовать еще раз</TextBlock>
+            </Viewbox>
+        </Button>
+        <Button Grid.Row="4" Grid.Column="1" Command="{Binding NextCommand}">
+            <Viewbox>
+                <TextBlock>Отправить результат по почте</TextBlock>
+            </Viewbox>
+        </Button>
+
+
+        <!--<Grid  Grid.Row="1" Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="13*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="8*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            <Grid.Background>
+                <ImageBrush ImageSource="../Images/SelectRegionRegionsBackground.png"></ImageBrush>
+            </Grid.Background>
+            <Viewbox Grid.Column="1" Grid.Row="0">
+                <TextBlock>Выберите герб</TextBlock>
+            </Viewbox>
+            <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <ScrollViewer  x:Name="ScrollViewer" 
+                               Grid.Column="1"
+                               BorderThickness="0"
+                               Background="Transparent"
+                               PanningMode="HorizontalOnly"
+                               HorizontalAlignment="Stretch"
+                               VerticalContentAlignment="Center"
+                               HorizontalScrollBarVisibility="Hidden" 
+                               VerticalScrollBarVisibility="Hidden"
+                               kernel:ScrollViewerBinding.HorizontalOffset="{Binding Path=HorizontalOffset, Mode=TwoWay}">
+                    <kernel:PushBindingManager.PushBindings>
+                        <kernel:PushBinding TargetProperty="ViewportWidth" Path="VisibleWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
+                    </kernel:PushBindingManager.PushBindings>
+                    <ListView HorizontalContentAlignment="Stretch" 
+                          ItemsSource="{Binding Path=Regions}" 
+                          SelectedItem="{Binding Path=SelectedRegion}"
+                          BorderThickness="0"
+                          Background="Transparent">
+                        <ListView.Resources>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Template" Value="{StaticResource DefaultListViewItemTemplate}"></Setter>
+                                <Setter Property="IsSelected" Value="{Binding Path=(kernel:ListViewItemModel.IsSelected), Mode=TwoWay}"></Setter>
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" 
+                                       Height="{Binding ElementName=ScrollViewer, Path=ActualHeight}" 
+                                       Background="Transparent"
+                                       HorizontalAlignment="Stretch">
+                                    <kernel:PushBindingManager.PushBindings>
+                                        <kernel:PushBinding TargetProperty="ActualWidth" Path="AllWidth"/>
+                                        <kernel:PushBinding TargetProperty="ActualHeight" Path="AllHeight"/>
+                                    </kernel:PushBindingManager.PushBindings>
+                                </WrapPanel>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                    </ListView>
+                </ScrollViewer>
+
+                <Button Grid.Column="0"
+                    Style="{StaticResource TransparentButton}"
+                    Command="{Binding Path=MoveToLeftCommand}"
+                    Visibility="{Binding Path=CanMoveToLeft, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Image Source="../Images/arrowLeftNew.png"></Image>
+                </Button>
+
+                <Button Grid.Column="2" 
+                    Style="{StaticResource TransparentButton}"
+                    Command="{Binding Path=MoveToRightCommand}" 
+                    Visibility="{Binding Path=CanMoveToRight, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Image Source="../Images/arrowRightNew.png"></Image>
+                </Button>
             </Grid>
-        </DockPanel>
-        <ContentPresenter DockPanel.Dock="Top" Content="{Binding}"></ContentPresenter>
-    </DockPanel>
+
+
+
+
+        </Grid>-->
+    </Grid>
 </Window>
