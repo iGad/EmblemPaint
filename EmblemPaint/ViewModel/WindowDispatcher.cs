@@ -195,6 +195,10 @@ namespace EmblemPaint.ViewModel
             {
                 if (File.Exists(Constants.DefaultConfigurationName))
                 {
+                    if (File.Exists(tempFileName))
+                    {
+                        File.Delete(tempFileName);
+                    }
                     File.Copy(Constants.DefaultConfigurationName, tempFileName);
                 }
                 using (Stream sw = new FileStream(Constants.DefaultConfigurationName, FileMode.Create, FileAccess.Write))
