@@ -30,8 +30,7 @@ namespace EmblemPaint.ViewModel
         }
 
         #region Properties
-
-        public new Configuration Configuration => base.Configuration as Configuration;
+        
 
         /// <summary>
         /// Список моделей окон

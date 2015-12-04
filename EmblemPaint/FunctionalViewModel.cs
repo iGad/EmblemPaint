@@ -63,6 +63,7 @@ namespace EmblemPaint
         /// </summary>
         protected virtual void Next()
         {
+            Utilities.PlaySound("Sounds/Button.wav");
             RaiseNextCommandExecuted();
         }
 
@@ -85,6 +86,7 @@ namespace EmblemPaint
         /// </summary>
         protected virtual void Back()
         {
+            Utilities.PlaySound("Sounds/Button.wav");
             RaiseBackCommandExecuted();
         }
 

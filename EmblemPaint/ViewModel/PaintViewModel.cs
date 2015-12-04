@@ -195,14 +195,14 @@ namespace EmblemPaint.ViewModel
             byte[] pixel = { sourceColor.B, sourceColor.G, sourceColor.R, sourceColor.A };
             if (Utilities.IsColorPixel(pixel))
             {
-                PatternImage = this.painter.FillImage(normalizePoint, SelectedColor.Color);
+                Utilities.PlaySound("Sounds/pencil_s_1.wav");
+                PatternImage = this.painter.FillImage(normalizePoint, SelectedColor.Color, 40);
 
             }
-            else
-            {
-                //TODO: сообщаем о том, что выбранная область незакрашиваема
-                //FilledImage = this.painter.FillImage(normalizePoint, SelectedColor.Color);
-            }
+            //else
+            //{
+            //    //TODO: сообщаем о том, что выбранная область незакрашиваема
+            //}
         }
 
         protected virtual void Update()
@@ -245,9 +245,11 @@ namespace EmblemPaint.ViewModel
 
         protected ObservableCollection<ColorViewModel> GetColors(Region currentRegion)
         {
-            return GetColors(currentRegion.Colors.Any() ? currentRegion.Colors : 
-                Configuration.Colors.Any() ? Configuration.Colors : 
-                Constants.ByDefaultColors.Select(c => new FillingColor(c)).ToList());
+            var colors = currentRegion.Colors.Any() ? currentRegion.Colors : Configuration.Colors;
+            return new ObservableCollection<ColorViewModel>(colors.Select(color=>new ColorViewModel(color.Color)));
+            //return GetColors(currentRegion.Colors.Any() ? currentRegion.Colors : 
+            //    Configuration.Colors.Any() ? Configuration.Colors : 
+            //    Constants.ByDefaultColors.Select(c => new FillingColor(c)).ToList());
         }
 
         private ObservableCollection<ColorViewModel> GetColors(IList<FillingColor> fillingColors)
@@ -267,6 +269,13 @@ namespace EmblemPaint.ViewModel
         {
             base.Reconfigure(newConfig);
             Update();
+        }
+
+        protected override void Home(bool? askUser)
+        {
+            Configuration.Painter.Dispose();
+            Configuration.Painter = null;
+            base.Home(askUser);
         }
 
         protected override void Next()

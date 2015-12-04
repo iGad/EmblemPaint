@@ -329,8 +329,10 @@
   <ItemGroup>
     <Content Include="Sounds\done.wav" />
     <Content Include="Sounds\left.wav" />
+    <Content Include="Sounds\pencil_s_1.wav" />
     <Content Include="Sounds\right.wav" />
     <Content Include="Sounds\try_again_g.wav" />
+    <Content Include="Sounds\well_done_g.wav" />
     <Resource Include="Images\ScreensaverBackground.png" />
     <Resource Include="Images\PaintBackround.png" />
     <Resource Include="Images\SelectRegionRegionsBackground.png" />

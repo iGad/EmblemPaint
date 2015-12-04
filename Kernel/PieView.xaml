@@ -6,7 +6,6 @@
              mc:Ignorable="d" 
              Name="PieWindow"
              Margin="1"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              d:DesignHeight="300" d:DesignWidth="300" Loaded="Pie_OnLoaded">
     <UserControl.Resources>
         <PathGeometry x:Key="Circle" Figures="M 50 5 A 50 50 0 0 1 50 105
@@ -32,14 +31,16 @@
     </UserControl.Triggers>
     <Grid Width="110" Height="110">
         <Grid.Resources>
-            <SolidColorBrush x:Key="StrokeBrush" Color="#FFB3B3B3"/>
+            <SolidColorBrush x:Key="StrokeBrush" Color="Transparent"/>
         </Grid.Resources>
         <Path x:Name="BackEllipse" 
               Stroke="{StaticResource StrokeBrush}"
-              StrokeThickness="2"
+              StrokeThickness="0"
+              
               Data ="{StaticResource Circle}">
         </Path>
-        <Path x:Name="MainPath" Stroke="{StaticResource StrokeBrush}" StrokeThickness="2">
+        <Path x:Name="MainPath" Stroke="{StaticResource StrokeBrush}" 
+              StrokeThickness="0">
             <Path.Data>
                 <PathGeometry>
                     <PathFigure x:Name="Figure" IsClosed="true" StartPoint="50,50" IsFilled="True">

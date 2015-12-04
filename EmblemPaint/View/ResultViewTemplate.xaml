@@ -2,9 +2,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:viewModel="clr-namespace:EmblemPaint.ViewModel"
                     xmlns:view="clr-namespace:EmblemPaint.View"
-                    xmlns:kernel="clr-namespace:EmblemPaint.Kernel;assembly=EmblemPaint.Kernel">
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
     <DataTemplate DataType="{x:Type viewModel:ResultViewModel}">
         <Grid>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Loaded">
+                    <i:InvokeCommandAction Command="{Binding WindowLoadedCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <Grid.Background>
                 <ImageBrush ImageSource="../Images/PaintBackround.png"/>
             </Grid.Background>
@@ -22,7 +27,7 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <Grid Grid.Row="1" Column="1" Background="Transparent">
-                <Border CornerRadius="45" Background="White">
+                <Border CornerRadius="45" Background="White" Margin="0,5">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="9*"/>
@@ -48,15 +53,14 @@
                     </Grid>
                 </Border>
             </Grid>
-            <Border Grid.Row="2" Grid.Column="1" Background="White" CornerRadius="45" Margin="0,15,0,0">
+            <Border Grid.Row="2" Grid.Column="1" Background="White" CornerRadius="45" Margin="0,5">
                 <Grid x:Name="Grid">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="5*"/>
                         <RowDefinition Height="3*"/>
                     </Grid.RowDefinitions>
                     <Grid>
-                        <view:ResultChart 
-                                            Width="200" 
+                        <view:ResultChart   Width="200" 
                                             Height="200" 
                                             StrokeThikness="0" 
                                             BorderThickness="0" 
@@ -72,100 +76,28 @@
                             <TextBlock  Text="{Binding Path=Result}" Margin="0,-10,0,0" FontWeight="Bold" Foreground="#b14f4a"/>
                         </Viewbox>
                         <TextBlock Text="Совпадений" Foreground="#FFA5A28E" Margin="0,30,0,0" FontSize="16"/>
-
-
                     </Grid>
                     <Viewbox Grid.Row="1">
                         <TextBlock HorizontalAlignment="Stretch" 
                                Text="{Binding Description}"  
                                    TextWrapping="Wrap"
-                               Width="{Binding ElementName=Grid, Path=ActualWidth}"/>
+                               Width="800"/>
                     </Viewbox>
                 </Grid>
 
             </Border>
 
-            <Button Grid.Row="3" Grid.Column="1" Command="{Binding HomeCommand}">
-                <Button.Triggers>
-                    <EventTrigger RoutedEvent="Button.Click">
-                        <SoundPlayerAction Source="../Sounds/try_again_g.wav"/>
-                    </EventTrigger>
-                </Button.Triggers>
+            <Button Grid.Row="3" Grid.Column="1" Command="{Binding HomeCommand}" Style="{StaticResource ActionButton}">
                 <Viewbox>
                     <TextBlock>Попробовать еще раз</TextBlock>
                 </Viewbox>
             </Button>
-            <Button Grid.Row="4" Grid.Column="1" Command="{Binding NextCommand}">
+            
+            <Button Grid.Row="4" Grid.Column="1" Style="{StaticResource ActionButton}" Command="{Binding NextCommand}">
                 <Viewbox>
                     <TextBlock>Отправить результат по почте</TextBlock>
                 </Viewbox>
             </Button>
-            <!--<Grid.RowDefinitions>
-                --><!--11--><!--
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="3*"></RowDefinition>
-                <RowDefinition Height="3*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="2*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Source="../Images/logo.jpg"/>
-
-            <Image Grid.Row="1" Grid.Column="0" Margin="20" Source="{Binding Path=ResultImage}"></Image>
-            <Image Grid.Row="1" Grid.Column="2" Margin="20" Source="{Binding Path=SourceImage}"></Image>
-            <TextBlock Grid.Row="1" Grid.Column="1" FontWeight="Bold" FontStyle="Italic">vs</TextBlock>
-
-            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
-                
-                <view:ResultChart 
-                    Width="200" 
-                    Height="200" 
-                    StrokeThikness="0" 
-                    BorderThickness="0" 
-                    Foreground="#b14f4a"
-                    StartAngle ="{Binding Path=StartAngle, Mode=OneWay}"
-                    FillingAngle ="{Binding Path=FillingAngle, Mode=OneWay}">
-                    <view:ResultChart.Effect>
-                        <DropShadowEffect BlurRadius="10" Color="#FFB3B3B3"/>
-                    </view:ResultChart.Effect>
-                </view:ResultChart>
-                <Ellipse Fill="#E0E5E5E5" Width="140" Height="140"/>
-                <TextBlock Text="{Binding Path=Result}" Margin="0,-10,0,0" FontWeight="Bold" Foreground="#b14f4a"></TextBlock>
-                <TextBlock Text="Совпадений" Foreground="#FFA5A28E" Margin="0,30,0,0" FontSize="16"/>
-            </Grid>
-            <Viewbox Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="3">
-                <TextBlock HorizontalAlignment="Stretch" Text="{Binding Description}" TextWrapping="WrapWithOverflow" Width="{Binding ElementName=Grid, Path=ActualWidth}"/>
-            </Viewbox>
-            --><!--<TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">Ваш результат!</TextBlock>
-            <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" FontSize="24">Lorem ipsum dolor. 
-            <LineBreak/> Consectetur adipisicing elit.</TextBlock>--><!--
-            <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <StackPanel VerticalAlignment="Center">
-                    <Button BorderBrush="#FFB4B4B4" 
-                        Command="{Binding Path=HomeCommand}" 
-                        CommandParameter="{StaticResource True}"
-                        Width="100" Height="100"
-                        BorderThickness="0">
-
-                        <Image Source="../Images/Home.png" 
-                           VerticalAlignment="Center" 
-                           HorizontalAlignment="Center"
-                           Margin="20"/>
-
-                    </Button>
-                    <TextBlock Margin="5">В начало</TextBlock>
-                </StackPanel>
-                <Button Grid.Column="1" Command ="{Binding NextCommand}">Отправить</Button>
-            </Grid>-->
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

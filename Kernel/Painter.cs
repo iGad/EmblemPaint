@@ -9,10 +9,10 @@ namespace EmblemPaint.Kernel
     public class Painter : IDisposable
     {
         public const int BytesPerPixel = 4;
-        private const int EqualtionConcurancy = 1;
+        private const int EqualtionConcurancy = 10;
         private WriteableBitmap filledImage;
         private readonly int sourceWidth, sourceHeight, stride;
-        private readonly byte[] sourceImageBytes, patternImageBytes, sourcePatternImageBytes;
+        private byte[] sourceImageBytes, patternImageBytes, sourcePatternImageBytes;
 
         public Painter(WriteableBitmap filledImage, BitmapImage sourceImage)
         {
@@ -96,10 +96,6 @@ namespace EmblemPaint.Kernel
             var rect = new Int32Rect(x, y, 1, 1);
             fillingImage.WritePixels(rect, filledPixel, this.stride, 0);
         }
-
-        
-
-        
 
         private bool IsPointInvalid(Point startPoint)
         {
@@ -202,7 +198,10 @@ namespace EmblemPaint.Kernel
         protected virtual void DoDispose()
         {
             Utilities.DisposeImage(SourceImage);
-
+            FilledImage = null;
+            this.patternImageBytes = null;
+            this.sourceImageBytes = null;
+            this.sourcePatternImageBytes = null;
         }
 
         ~Painter()

@@ -107,7 +107,7 @@
                                 <SoundPlayerAction Source="../Sounds/left.wav"/>
                             </EventTrigger>
                         </Button.Triggers>
-                        <Image Source="../Images/arrowLeftNew.png"></Image>
+                        <Image StretchDirection="DownOnly" Source="../Images/arrowLeftNew.png"></Image>
                     </Button>
 
                     <Button Grid.Column="2" 
@@ -119,7 +119,7 @@
                                 <SoundPlayerAction Source="../Sounds/right.wav"/>
                             </EventTrigger>
                         </Button.Triggers>
-                        <Image Source="../Images/arrowRightNew.png"></Image>
+                        <Image StretchDirection="DownOnly" Source="../Images/arrowRightNew.png"></Image>
                     </Button>
                 </Grid>
 

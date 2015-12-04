@@ -24,10 +24,20 @@ namespace EmblemPaint
             {
                 PrepareRegions(configuration);
             }
-            var windowDispatcher = new WindowDispatcher(configuration, CreateViewModels(configuration));
-            var mainWindow = new MainWindow {DataContext = windowDispatcher};
-            mainWindow.Show();
-            exit = true;
+            while (!exit)
+            {
+                var windowDispatcher = new WindowDispatcher(configuration, CreateViewModels(configuration));
+                try
+                {
+                    var mainWindow = new MainWindow {DataContext = windowDispatcher};
+                    mainWindow.ShowDialog();
+                    exit = true;
+                }
+                catch
+                {
+                    windowDispatcher.Dispose();
+                }
+            }
         }
 
         private void PrepareRegions(Configuration configuration)

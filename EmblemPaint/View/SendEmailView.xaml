@@ -6,38 +6,73 @@
                     xmlns:controls="clr-namespace:WpfKb.Controls;assembly=WpfKb">
     <DataTemplate DataType="{x:Type viewModel:SendEmailViewModel}">
         <Grid>
+            <Grid.Background>
+                <ImageBrush ImageSource="../Images/PaintBackround.png"/>
+            </Grid.Background>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="13*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="0.5*"></RowDefinition>
-                <RowDefinition Height="5*"></RowDefinition>
-                <RowDefinition Height="0.5*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="0.2*"/>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="3*"/>
             </Grid.RowDefinitions>
-            <DockPanel Grid.Row="0">
-                <Grid x:Name="HomeButtonGrid"  Width="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ActualHeight}">
-                    <Button Style="{StaticResource HomeButton}" CommandParameter="{StaticResource True}"/>
-                </Grid>
-                <Grid Background="White">
-                    <Image Source="../Images/logo.jpg"/>
-                </Grid>
-            </DockPanel>
-            <TextBlock Grid.Row="1" TextWrapping="Wrap" FontSize="24">
-                Поделитесь своим результатом по e-mail
-            </TextBlock>
-            <Grid Grid.Row="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <TextBlock HorizontalAlignment="Right">Введите e-mail:</TextBlock>
-                <TextBox Grid.Column="1" HorizontalAlignment="Left" Width="400"/>
+            <Grid Grid.Row="1" Grid.Column="1" Background="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="9*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Border Style="{StaticResource WhiteCircledBorder}" Margin="0,5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="6*"/>
+                            <ColumnDefinition Width="6*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="5*"/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Viewbox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+                            <TextBlock>
+                                Поделитесь своим результатом по e-mail
+                            </TextBlock>
+                        </Viewbox>
+                        <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+                        </Grid>
+                        <Viewbox Grid.Column="1" Grid.Row="2">
+                            <TextBlock x:Name="EmailTextBlock" HorizontalAlignment="Right">Введите e-mail:</TextBlock>
+                        </Viewbox>
+                        <TextBox Grid.Column="2" Grid.Row="2" 
+                                 HorizontalAlignment="Stretch" 
+                                 TextAlignment="Left"  
+                                 FontSize="36"
+                                 Text="{Binding Path=Email, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Viewbox Grid.Column="1" Grid.Row="3">
+                            <TextBlock x:Name="MessageTextBlock" HorizontalAlignment="Right">Текст:</TextBlock>
+                        </Viewbox>
+                        <TextBox Grid.Column="2" Grid.Row="3"
+                                 HorizontalAlignment="Stretch" 
+                                 FontSize="36"
+                                 TextAlignment="Left"  
+                                 MaxLines="100"
+                                 Text="{Binding Path=Text, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                </Border>
+                
+                <Button Grid.Row="1" Style="{StaticResource ActionButton}" Command="{Binding NextCommand}">
+                    <Viewbox>
+                        <TextBlock>Готово, отправить</TextBlock>
+                    </Viewbox>
+                </Button>
             </Grid>
-            <Button Grid.Row="4" HorizontalAlignment="Center" Height="50" Width="400">
-                <TextBlock>ГОТОВО, ОТПРАВИТЬ</TextBlock></Button>
-            <Grid  Grid.Row="5" >
-                <controls:RusEngKeyboard/>
-            </Grid>
+            <controls:RusEngKeyboard Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"/>
         </Grid>
+        
     </DataTemplate>
 </ResourceDictionary>

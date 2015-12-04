@@ -24,8 +24,14 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.Row="1" Column="1" Background="Transparent">
                 <Border CornerRadius="45" Background="White">
-                    <Image x:Name="Image" 
-                       Source="{Binding Path=PatternImage}">
+                    <Image x:Name="Image" Source="{Binding Path=PatternImage}">
+                        <!--<Image.Triggers>
+                            <EventTrigger RoutedEvent="Image.MouseUp">
+                                <EventTrigger.Actions>
+                                    <SoundPlayerAction Source="../Sounds/pencil_s_1.wav"/>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                        </Image.Triggers>-->
                         <kernel:PushBindingManager.PushBindings>
                             <kernel:PushBinding TargetProperty="ActualWidth" Path="ImageWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
                             <kernel:PushBinding TargetProperty="ActualHeight" Path="ImageHeight" Converter="{StaticResource DoubleToIntValueConverter}"/>
@@ -81,17 +87,14 @@
                                                HorizontalAlignment="Center" 
                                                ItemWidth="{Binding BrushWidth}" 
                                                Width="{Binding ElementName=ColorListView, Path=ActualWidth}"/>
-                                    
+
                                 </ItemsPanelTemplate>
                             </ListView.ItemsPanel>
 
                             <ListView.Resources>
                                 <Style TargetType="ListViewItem">
-                                    <Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}">
-                                    </Setter>
-                                    <!--<Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}"></Setter>-->
+                                    <Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}"/>
                                     <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"></Setter>
-                                    <!--<Setter Property="Width" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushWidth}"></Setter>-->
                                     <Setter Property="Height" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushHeight}"/>
                                     <Setter Property="Width" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushHeight}"/>
                                 </Style>
@@ -99,7 +102,7 @@
 
                         </ListView>
                     </Border>
-                    <Button Grid.Row="2" Grid.Column="1" Command="{Binding NextCommand}">
+                    <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource Button}" Command="{Binding NextCommand}">
                         <Button.Triggers>
                             <EventTrigger RoutedEvent="Button.Click">
                                 <SoundPlayerAction Source="../Sounds/done.wav"/>
@@ -112,112 +115,5 @@
                 </Grid>
             </Border>
         </Grid>
-        <!--<Grid>
-            <Grid.Resources>
-                <kernel:DoubleToIntValueConverter x:Key="DoubleToIntValueConverter"/>
-            </Grid.Resources>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="6*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
-            <kernel:PushBindingManager.PushBindings>
-                <kernel:PushBinding TargetProperty="ActualWidth" Path="WindowWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
-            </kernel:PushBindingManager.PushBindings>
-            <DockPanel Grid.Row="0" >
-                <Grid  Width="{Binding RelativeSource={RelativeSource Mode=Self}, Path=ActualHeight}">
-                    <Button Style="{StaticResource HomeButton}"  CommandParameter="{StaticResource True}"/> 
-                </Grid>
-                <Grid Background="White">
-                    <Image Source="../Images/logo.jpg"/>
-                </Grid>
-            </DockPanel>
-
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="12*"/>
-                </Grid.RowDefinitions>
-                <TextBlock>Нажмите, чтобы закрасить область</TextBlock>
-                <Image Grid.Row="1" Margin="40,20" x:Name="Image" 
-                   Source="{Binding Path=PatternImage}">
-                    <kernel:PushBindingManager.PushBindings>
-                        <kernel:PushBinding TargetProperty="ActualWidth" Path="ImageWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
-                        <kernel:PushBinding TargetProperty="ActualHeight" Path="ImageHeight" Converter="{StaticResource DoubleToIntValueConverter}"/>
-                    </kernel:PushBindingManager.PushBindings>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseDown">
-                            <kernel:MouseEventToCommandMap Command="{Binding MouseDownCommand}" CommandParameter="{Binding}"></kernel:MouseEventToCommandMap>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Image>
-            </Grid>
-
-            <Grid Grid.Row="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="4*"/>
-                </Grid.RowDefinitions>
-                <TextBlock FontSize="18">
-                Выберите цвет
-                </TextBlock>
-                <ListView Grid.Row="1" x:Name="ColorListView" Background="Transparent" BorderThickness="0" 
-                          ItemsSource="{Binding Path=Colors}"
-                          SelectedItem="{Binding Path=SelectedColor}">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <kernel:PushBindingManager.PushBindings>
-                                    <kernel:PushBinding TargetProperty="ActualHeight" Path="BrushContainerHeight" Converter="{StaticResource DoubleToIntValueConverter}"/>
-                                </kernel:PushBindingManager.PushBindings>
-                            </StackPanel>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-
-                    <ListView.Resources>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}"></Setter>
-                            <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"></Setter>
-                            <Setter Property="Width" Value="{Binding ElementName=ColorListView, Path=DataContext.(viewModel:PaintViewModel.BrushWidth)}"></Setter>
-                            <Setter Property="Height" Value="{Binding ElementName=ColorListView, Path=DataContext.(viewModel:PaintViewModel.BrushHeight)}"/>
-                        </Style>
-                    </ListView.Resources>
-
-                </ListView>
-
-            </Grid>
-
-            <Grid Grid.Row="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.5*"/>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="0.5*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="5*"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Viewbox Grid.Row="1" Grid.Column="1">
-                    <Button Grid.Column="0" 
-                    Command="{Binding Path=BackCommand}"
-                  
-                    Content="{StaticResource BackButtonGrid}"/>  --><!--Height="50"
-                    Width="150"--><!--
-                </Viewbox>
-                <Viewbox Grid.Row="1" Grid.Column="3">
-                    <Button Grid.Column="1"
-                       Command="{Binding Path=NextCommand}" 
-                      
-                       Content="{StaticResource CompleteButtonGrid}"/> --><!--Height="50"
-                       Width="150"--><!--
-                </Viewbox>
-                
-
-            </Grid>
-        </Grid>-->
     </DataTemplate>
 </ResourceDictionary>

@@ -49,6 +49,9 @@ namespace EmblemPaint.ViewModel
         
         public ObservableCollection<RegionViewModel> Regions { get; } = new ObservableCollection<RegionViewModel>();
 
+        /// <summary>
+        /// 
+        /// </summary>
         public RegionViewModel SelectedRegion
         {
             get { return this.selectedRegion; }
@@ -56,7 +59,6 @@ namespace EmblemPaint.ViewModel
             {
                 if (this.selectedRegion != value)
                 {
-                    //this.selectedRegion = value;
                     OnPropertyChanged(nameof(SelectedRegion));
                     if (value != null)
                     {
@@ -64,11 +66,10 @@ namespace EmblemPaint.ViewModel
                         Next();
                     }
                     Dispatcher.CurrentDispatcher.Invoke(() => NextCommand.RaiseCanExecuteChanged());
-                    
+
                 }
             }
         }
-
         /// <summary>
         /// Ширина видимой области
         /// </summary>
@@ -172,8 +173,7 @@ namespace EmblemPaint.ViewModel
                 }
             }
         }
-
-
+        
         /// <summary>
         /// Отступ между элементами TreeView
         /// </summary>
@@ -252,22 +252,26 @@ namespace EmblemPaint.ViewModel
 
         #endregion
 
-        
+
         #region Overrides
-        
+
         /// <summary>
         /// Блокировка кнопки Далее, если не выбран регион
         /// </summary>
         /// <returns></returns>
         protected override bool CanExecuteNextCommand()
         {
-            return SelectedRegion != null;
+            return Configuration.SelectedRegion != null;
         }
 
         public override void Reconfigure(Configuration newConfig)
         {
             base.Reconfigure(newConfig);
-            Update();
+            foreach (var regionViewModel in Regions)
+            {
+                regionViewModel.IsSelected = false;
+            }
+            //Update();
         }
 
         private void Update()

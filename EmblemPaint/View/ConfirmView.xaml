@@ -6,28 +6,52 @@
         mc:Ignorable="d"
         WindowState="Maximized"
         WindowStyle="None"
-        AllowsTransparency="True"
-        Background="#1F000000"><!--Height="500" Width="900"-->
+        AllowsTransparency="True" Background="#00FFFFFF">
+    <!--Height="500" Background="#1FFFFFFF" Width="900"-->
     <Grid>
-        <Grid Background="#FFF2F2F2" Opacity="1" Width="900" Height="500">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="13*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" Grid.ColumnSpan="3" Background="#60000000">
+            <Grid.Effect>
+                <BlurEffect/>
+            </Grid.Effect>
+        </Grid>
+        <Grid Background="Transparent" Grid.Column="1" Height="500">
             <Grid.RowDefinitions>
-                  <RowDefinition Height="3*"/>
-                  <RowDefinition Height="1*"/>
-                  <RowDefinition Height="2*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            
-            <TextBlock Grid.ColumnSpan="2" FontSize="72" TextWrapping="Wrap">Вы уверены, что хотите выйти?</TextBlock>
-            <TextBlock Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="1" FontSize="38" TextWrapping="Wrap" FontStyle="Italic">Все данные будут потеряны.</TextBlock>
-            
-            <Button Grid.Row="2" Grid.Column="0" Click="ExitButtonClick">
-                <TextBlock Foreground="#FF909090">ВЫЙТИ</TextBlock>
+            <Border Grid.ColumnSpan="2" Style="{StaticResource WhiteCircledBorder}" Margin="0,5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Viewbox  Grid.ColumnSpan="2" Margin="20,0">
+                        <TextBlock >Вы уверены, что хотите выйти?</TextBlock>
+                    </Viewbox>
+                    <Viewbox Grid.Row="1" VerticalAlignment="Top">
+                        <TextBlock Width="200">Данные не сохраняются</TextBlock>
+                    </Viewbox>
+                </Grid>
+            </Border>
+            <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  Style="{StaticResource SoundActionButton}"  Click="ExitButtonClick">
+                <Viewbox>
+                    <TextBlock>Выйти</TextBlock>
+                </Viewbox>
             </Button>
-            <Button Grid.Row="2" Grid.Column="1" Click="CancelButtonClick" >
-                <TextBlock Foreground="#FF909090">ОТМЕНА</TextBlock>
+            <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SoundActionButton}"  Click="CancelButtonClick" >
+                <Viewbox>
+                    <TextBlock>Отмена</TextBlock>
+                </Viewbox>
             </Button>
         </Grid>
     </Grid>

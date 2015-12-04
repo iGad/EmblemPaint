@@ -13,6 +13,13 @@
                 Background="Transparent"
                 Width="{Binding ElementName=ScrollViewer, Path=DataContext.ItemWidth}"
                 Height="{Binding ElementName=ScrollViewer, Path=DataContext.ItemHeight}">
+            <!--<Border.Triggers>
+                <EventTrigger RoutedEvent="Border.MouseUp">
+                    <EventTrigger.Actions>
+                        <SoundPlayerAction Source="Sounds/Button.wav"/>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+            </Border.Triggers>-->
             <Grid VerticalAlignment="Top" Margin="1,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="3*"/>
@@ -32,7 +39,14 @@
             <kernel:ColorToBrushConverter x:Key="ColorToBrushConverter"></kernel:ColorToBrushConverter>
         </ControlTemplate.Resources>
         <!---->
-        <Grid>
+        <Grid Background="Transparent">
+            <Grid.Triggers>
+                <EventTrigger RoutedEvent="Grid.MouseUp">
+                     <EventTrigger.Actions>
+                    <SoundPlayerAction Source="Sounds/Button.wav"/>
+                </EventTrigger.Actions>
+                </EventTrigger>
+            </Grid.Triggers>
             <Ellipse StrokeThickness="3" 
                         Style="{StaticResource ColorListItemBorderStyle}" 
                         Fill="{Binding Path=(viewModel:ColorViewModel.Color), Converter={StaticResource ColorToBrushConverter}}"/>

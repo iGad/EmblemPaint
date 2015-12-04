@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -14,6 +15,8 @@ namespace EmblemPaint.Kernel
 {
     public static class Utilities
     {
+        private static SoundPlayer Player = new SoundPlayer();
+
         /// <summary>
         /// Получить экземпляр BitmapImage из файла с изображением
         /// </summary>
@@ -186,6 +189,21 @@ namespace EmblemPaint.Kernel
                     colors.Add(new FillingColor { HexArgbColor = Constants.ByDefaultColors.ElementAt(i).ToHexString() });
                 }
                 i++;
+            }
+        }
+
+        /// <summary>
+        /// Воспроизвести звук
+        /// </summary>
+        /// <param name="pathToFile">Путь к фалу со звуком</param>
+        public static void PlaySound(string pathToFile)
+        {
+            if (File.Exists(pathToFile))
+            {
+                Player.Stop();
+                Player.SoundLocation = pathToFile;
+                Player.Load();
+                Player.Play();
             }
         }
     }
