@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Windows.Media;
 
 namespace WpfKb.LogicalKeys
 {
@@ -21,6 +22,7 @@ namespace WpfKb.LogicalKeys
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _displayName;
+        private static MediaPlayer _mediaPlayer;
 
         public virtual string DisplayName
         {
@@ -35,9 +37,22 @@ namespace WpfKb.LogicalKeys
             }
         }
 
+        static LogicalKeyBase()
+        {
+            _mediaPlayer = new MediaPlayer();
+            _mediaPlayer.Open(new Uri("Sounds/clicks/keyboard.wav", UriKind.RelativeOrAbsolute));
+        }
+
         public virtual void Press()
         {
+            PlaySound();
             OnKeyPressed();
+        }
+
+        public virtual void PlaySound()
+        {
+            _mediaPlayer.Position = TimeSpan.Zero;
+            _mediaPlayer.Play();
         }
 
         protected void OnKeyPressed()

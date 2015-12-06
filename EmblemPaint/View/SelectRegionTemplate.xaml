@@ -4,6 +4,9 @@
                     xmlns:viewModel="clr-namespace:EmblemPaint.ViewModel">
     <DataTemplate DataType="{x:Type viewModel:SelectRegionViewModel}">
         <Grid>
+            <Grid.Background>
+                <ImageBrush ImageSource="../Images/SelectRegionBackground.png"></ImageBrush>
+            </Grid.Background>
             <Grid.Resources>
                 <kernel:DoubleToIntValueConverter x:Key="DoubleToIntValueConverter"/>
                 <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -12,29 +15,6 @@
                 <RowDefinition Height="2*"></RowDefinition>
                 <RowDefinition Height="3*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-                <Grid.Background>
-                    <ImageBrush ImageSource="../Images/SelectRegionTextBackground.png"></ImageBrush>
-                </Grid.Background>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition x:Name="TextColumn" Width="2*"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Viewbox x:Name="Viewbox" Grid.Column="1">
-                    <TextBlock FontWeight="Bold"
-                           Width="150"
-                           HorizontalAlignment="Stretch" 
-                           VerticalAlignment="Stretch" 
-                           TextWrapping="Wrap">
-                    Посмотрим, насколько хорошо вы помните цвета герба. 
-                    Выберите герб любимого региона России и попробуйте 
-                    его расскрасить. Совсем скоро мы узнаем, насколько
-                    точна ваша память и развита интуиция.
-                    </TextBlock>
-                </Viewbox>
-
-            </Grid>
             <Grid  Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
@@ -46,18 +26,13 @@
                     <RowDefinition Height="8*"/>
                     <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
-                <Grid.Background>
-                    <ImageBrush ImageSource="../Images/SelectRegionRegionsBackground.png"></ImageBrush>
-                </Grid.Background>
-                <Viewbox Grid.Column="1" Grid.Row="0">
-                    <TextBlock>Выберите герб</TextBlock>
-                </Viewbox>
-                <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">
+                <Grid Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="6*"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
+                    
                     <ScrollViewer  x:Name="ScrollViewer" 
                                Grid.Column="1"
                                BorderThickness="0"
@@ -71,6 +46,7 @@
                         <kernel:PushBindingManager.PushBindings>
                             <kernel:PushBinding TargetProperty="ViewportWidth" Path="VisibleWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
                         </kernel:PushBindingManager.PushBindings>
+                        
                         <ListView HorizontalContentAlignment="Stretch" 
                                   ItemsSource="{Binding Path=Regions}" 
                                   SelectedItem="{Binding Path=SelectedRegion}"
@@ -107,7 +83,7 @@
                                 <SoundPlayerAction Source="../Sounds/left.wav"/>
                             </EventTrigger>
                         </Button.Triggers>
-                        <Image StretchDirection="DownOnly" Source="../Images/arrowLeftNew.png"></Image>
+                        <Image  Width="91" Height="176" Stretch="Fill" Source="../Images/arrowLeftNew.png"></Image><!--StretchDirection="DownOnly"-->
                     </Button>
 
                     <Button Grid.Column="2" 
@@ -119,7 +95,7 @@
                                 <SoundPlayerAction Source="../Sounds/right.wav"/>
                             </EventTrigger>
                         </Button.Triggers>
-                        <Image StretchDirection="DownOnly" Source="../Images/arrowRightNew.png"></Image>
+                        <Image Width="91" Height="176" Stretch="Fill" Source="../Images/arrowRightNew.png"></Image><!--StretchDirection="DownOnly"-->
                     </Button>
                 </Grid>
 

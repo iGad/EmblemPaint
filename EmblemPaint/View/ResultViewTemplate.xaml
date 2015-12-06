@@ -11,7 +11,104 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <Grid.Background>
-                <ImageBrush ImageSource="../Images/PaintBackround.png"/>
+                <ImageBrush ImageSource="../Images/ResultBackground.jpg"></ImageBrush>
+            </Grid.Background>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.2*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="3.4*"/>
+                <RowDefinition Height="0.8*"/>
+                <RowDefinition Height="0.2*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="12*"/>
+                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="1" Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="0.4*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
+                <Image Grid.Row="1" Grid.Column="0" Source="{Binding Path=ResultImage}" Opacity="0.8"/>
+                <Image Grid.Row="1" Grid.Column="2" Source="{Binding Path=SourceImage}" Opacity="0.8"/>
+            </Grid>
+            <Grid Grid.Row="2" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="0.5*"/>
+                    <RowDefinition Height="1.5*"/>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="0.5*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="1" x:Name="ChartGrid">
+                    <view:ResultChart   Width="{Binding ElementName=ChartGrid, Path=ActualHeight}" 
+                                        Height="{Binding ElementName=ChartGrid, Path=ActualHeight}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        StrokeThikness="0" 
+                                        BorderThickness="0" 
+                                        Foreground="#b14f4a"
+                                        StartAngle ="{Binding Path=StartAngle, Mode=OneWay}"
+                                        FillingAngle ="{Binding Path=FillingAngle, Mode=OneWay}">
+                        <view:ResultChart.Effect>
+                            <DropShadowEffect BlurRadius="10" Color="#FFB3B3B3"/>
+                        </view:ResultChart.Effect>
+                    </view:ResultChart>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition/>
+                            <RowDefinition Height="0.5*"/>
+                            <RowDefinition Height="1.5*"/>
+                        </Grid.RowDefinitions>
+                        <Viewbox Grid.Row="1">
+                            <TextBlock FontFamily="../MyriadPro-Bold_0.otf#Myriad Pro-Bold" Text="{Binding Path=Result}" FontWeight="Bold" Foreground="#b14f4a"/>
+                        </Viewbox>
+                        <Viewbox Grid.Row="2">
+                            <TextBlock Text="Совпадений" Foreground="#FFA5A28E"/>
+                        </Viewbox>
+                    </Grid>
+
+                </Grid>
+
+                <Grid Grid.Row="3">
+                    <!--Congratulations-->
+                    <TextBlock FontSize="65" Text="{Binding Congratulations}"/>
+                </Grid>
+                <TextBlock Grid.Row="4" HorizontalAlignment="Stretch" 
+                               Text="{Binding Description}"  
+                               TextWrapping="Wrap"
+                               FontSize="{Binding Path=Configuration.ResultDescriptionFontSize}"/>
+            </Grid>
+            <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Button   Grid.Row="0"  Command="{Binding HomeCommand}" Style="{StaticResource Button}">
+                    <Image x:Name="TryAgainButton" Source="../Images/TryAgain.png"/>
+                   
+            </Button>
+
+            <Button  Grid.Row="1" Style="{StaticResource Button}" Command="{Binding NextCommand}">
+                <Image Source="../Images/SendEmail.png"/>
+            </Button>
+            </Grid>
+        </Grid>
+        <!--<Grid>
+            
+            <Grid.Background>
+                <ImageBrush ImageSource="../Images/background.png"/>
             </Grid.Background>
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.5*"/>
@@ -26,42 +123,59 @@
                 <ColumnDefinition Width="13*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
+            <Button   Grid.Row="3" Grid.Column="1" Margin="0,5" Command="{Binding HomeCommand}" Style="{StaticResource Button}">
+                <Image x:Name="TryAgainButton" Source="../Images/TryAgain.png"/>
+                --><!--<Viewbox>
+                    <TextBlock>Попробовать еще раз</TextBlock>
+                </Viewbox>--><!--
+            </Button>
+
+            <Button  Grid.Row="4" Margin="0,5" Grid.Column="1" Style="{StaticResource Button}" Command="{Binding NextCommand}">
+                <Image Source="../Images/SendEmail.png"/>
+                --><!--<Viewbox>
+                    <TextBlock>Отправить результат по почте</TextBlock>
+                </Viewbox>--><!--
+            </Button>
             <Grid Grid.Row="1" Column="1" Background="Transparent">
-                <Border CornerRadius="45" Background="White" Margin="0,5">
+                <Border HorizontalAlignment="Center" CornerRadius="45" Width="{Binding ElementName=TryAgainButton, Path=ActualWidth}" Background="White" Margin="0,5">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="9*"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="9*"/>
+                            <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="9*"/>
                         </Grid.ColumnDefinitions>
+                        <Image Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0" Source="../Images/vs.png" StretchDirection="Both"/>
+                        
+                        <Image Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="0" Source="{Binding Path=SourceImage}" Opacity="0.8"></Image>
 
-                        <Image Grid.Column="0" Source="{Binding Path=ResultImage}"></Image>
-                        <Image Grid.Column="2" Grid.Row="0" Source="{Binding Path=SourceImage}"></Image>
-                        <Viewbox Grid.Row="0" Grid.Column="1">
-                            <TextBlock  FontWeight="Bold" FontStyle="Italic">vs</TextBlock>
+                        <Viewbox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" >
+                            <TextBlock Foreground="#FFB3B3B3" FontWeight="Bold" FontSize="36">Вы раскрасили</TextBlock>
                         </Viewbox>
-                        <Viewbox Grid.Row="1" Grid.Column="0">
-                            <TextBlock Foreground="#FFB3B3B3">Вы раскрасили</TextBlock>
-                        </Viewbox>
-                        <Viewbox Grid.Row="1" Grid.Column="2">
-                            <TextBlock  Foreground="#FFB3B3B3">Оригинал</TextBlock>
+                        <Viewbox Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2">
+                            <TextBlock  Foreground="#FFB3B3B3" FontWeight="Bold" FontSize="36">Оригинал</TextBlock>
                         </Viewbox>
                     </Grid>
                 </Border>
             </Grid>
-            <Border Grid.Row="2" Grid.Column="1" Background="White" CornerRadius="45" Margin="0,5">
+            <Border HorizontalAlignment="Center" Width="{Binding ElementName=TryAgainButton, Path=ActualWidth}" Grid.Row="2" Grid.Column="1" Background="White" CornerRadius="45" Margin="0,5">
                 <Grid x:Name="Grid">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="0.5*"/>
                         <RowDefinition Height="5*"/>
+                        <RowDefinition Height="0.5*"/>
                         <RowDefinition Height="3*"/>
                     </Grid.RowDefinitions>
-                    <Grid>
-                        <view:ResultChart   Width="200" 
-                                            Height="200" 
+                    <Grid Grid.Row="1" x:Name="ChartGrid">
+                        <view:ResultChart   Width="{Binding ElementName=ChartGrid, Path=ActualHeight}" 
+                                            Height="{Binding ElementName=ChartGrid, Path=ActualHeight}"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
                                             StrokeThikness="0" 
                                             BorderThickness="0" 
                                             Foreground="#b14f4a"
@@ -71,33 +185,31 @@
                                 <DropShadowEffect BlurRadius="10" Color="#FFB3B3B3"/>
                             </view:ResultChart.Effect>
                         </view:ResultChart>
-                        <Ellipse Fill="#E0E5E5E5" Width="140" Height="140"/>
-                        <Viewbox Width="100">
-                            <TextBlock  Text="{Binding Path=Result}" Margin="0,-10,0,0" FontWeight="Bold" Foreground="#b14f4a"/>
-                        </Viewbox>
-                        <TextBlock Text="Совпадений" Foreground="#FFA5A28E" Margin="0,30,0,0" FontSize="16"/>
+                        --><!--<Ellipse VerticalAlignment="Center" HorizontalAlignment="Center" Fill="#E0E5E5E5" Width="350" Height="350"/>--><!--
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2*"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="0.5*"/>
+                                <RowDefinition Height="1.5*"/>
+                            </Grid.RowDefinitions>
+                            <Viewbox Grid.Row="1">
+                                <TextBlock  Text="{Binding Path=Result}" FontWeight="Bold" Foreground="#b14f4a"/>
+                            </Viewbox>
+                            <Viewbox Grid.Row="2">
+                                <TextBlock Text="Совпадений" Foreground="#FFA5A28E"/>
+                            </Viewbox>
+                        </Grid>
+                       
                     </Grid>
-                    <Viewbox Grid.Row="1">
-                        <TextBlock HorizontalAlignment="Stretch" 
-                               Text="{Binding Description}"  
-                                   TextWrapping="Wrap"
-                               Width="800"/>
-                    </Viewbox>
+                    --><!--<Viewbox Grid.Row="1">--><!--
+                    
+                    --><!--</Viewbox>--><!--
                 </Grid>
 
             </Border>
 
-            <Button Grid.Row="3" Grid.Column="1" Command="{Binding HomeCommand}" Style="{StaticResource ActionButton}">
-                <Viewbox>
-                    <TextBlock>Попробовать еще раз</TextBlock>
-                </Viewbox>
-            </Button>
             
-            <Button Grid.Row="4" Grid.Column="1" Style="{StaticResource ActionButton}" Command="{Binding NextCommand}">
-                <Viewbox>
-                    <TextBlock>Отправить результат по почте</TextBlock>
-                </Viewbox>
-            </Button>
-        </Grid>
+        </Grid>-->
     </DataTemplate>
 </ResourceDictionary>

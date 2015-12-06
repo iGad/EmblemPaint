@@ -51,12 +51,12 @@ namespace EmblemPaint.View
             get; set;
         }
 
-        private Geometry GetCircleGeometry(double startAngle, double arcAngle)
+        private Geometry GetCircleGeometry(double startAngle, double arcAngle, double width, double height)
         {
-            var circleR = Math.Min((ActualWidth - BorderThickness.Left - BorderThickness.Right - 2*StrokeThikness)/2,
-                (ActualHeight - BorderThickness.Top - BorderThickness.Bottom - 2*StrokeThikness)/2);
-            double xOffset = (ActualWidth/2 - circleR)/2;
-            double yOffset = (ActualHeight/2 - circleR)/2;
+            var circleR = Math.Min((width - BorderThickness.Left - BorderThickness.Right - 2*StrokeThikness)/2,
+                (height - BorderThickness.Top - BorderThickness.Bottom - 2*StrokeThikness)/2);
+            double xOffset = (width / 2 - circleR)/2;
+            double yOffset = (height / 2 - circleR)/2;
 
             List<PathSegment> segments = new List<PathSegment>();
             segments.Add(new LineSegment(
@@ -99,18 +99,26 @@ namespace EmblemPaint.View
                 Fill = new SolidColorBrush(Colors.White),
                 StrokeThickness = StrokeThikness,
                 Stroke = BorderBrush,
-                Data = GetCircleGeometry(0, 2 * Math.PI)
+                Data = GetCircleGeometry(0, 2 * Math.PI, ActualWidth, ActualHeight)
             };
             Path filledEllipse = new Path
             {
                 Fill = Foreground,
                 StrokeThickness = StrokeThikness,
                 Stroke = BorderBrush,
-                Data = GetCircleGeometry(StartAngle, FillingAngle)
+                Data = GetCircleGeometry(StartAngle, FillingAngle, ActualWidth, ActualHeight)
+            };
+            Path additionalEllipse = new Path
+            {
+                Fill = new SolidColorBrush(Color.FromArgb(224, 229,229,229)),
+                StrokeThickness = 0,
+                Data = GetCircleGeometry(0, 2*Math.PI, ActualWidth * 0.75, ActualHeight*0.75),
+                HorizontalAlignment=HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
             };
             this.MainGrid.Children.Add(ellipsePath);
             this.MainGrid.Children.Add(filledEllipse);
-
+            this.MainGrid.Children.Add(additionalEllipse);
         }
     }
 }

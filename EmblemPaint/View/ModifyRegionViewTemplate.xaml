@@ -58,8 +58,79 @@
                 </ScrollViewer>
                
             </Grid>
+            <Grid Grid.Row="2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <ListView x:Name="ColorListView" 
+                                      Background="Transparent" 
+                                      BorderThickness="0" 
+                                      ItemsSource="{Binding Path=UpColors}"
+                                      SelectedItem="{Binding Path=SelectedUpColor}"
+                                      HorizontalAlignment="Stretch"
+                                      HorizontalContentAlignment="Center"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                      Margin="50,0">
+                        <kernel:PushBindingManager.PushBindings>
+                            <kernel:PushBinding TargetProperty="ActualHeight" Path="BrushContainerHeight" Converter="{StaticResource DoubleToIntValueConverter}"/>
+                            <kernel:PushBinding TargetProperty="ActualWidth" Path="BrushContainerWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
+                        </kernel:PushBindingManager.PushBindings>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" 
+                                               HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Bottom"
+                                               ItemWidth="{Binding BrushWidth}" 
+                                               />
+                                <!--Width="{Binding ElementName=ColorListView, Path=ActualWidth}"-->
 
-            <ListView Grid.Row="2" x:Name="ColorListView" 
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+
+                        <ListView.Resources>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}"/>
+                                <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"></Setter>
+                                <Setter Property="Height" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushSize}"/>
+                                <Setter Property="Width" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushSize}"/>
+                            </Style>
+                        </ListView.Resources>
+
+                    </ListView>
+                    <ListView Grid.Row="1"
+                                  Background="Transparent" 
+                                  BorderThickness="0" 
+                                  ItemsSource="{Binding Path=DownColors}"
+                                  SelectedItem="{Binding Path=SelectedDownColor}"
+                                  HorizontalAlignment="Center"
+                                  HorizontalContentAlignment="Center"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                  Margin="50,0">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" 
+                                               HorizontalAlignment="Center" 
+                                                   
+                                               ItemWidth="{Binding BrushWidth}"/>
+
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+
+                        <ListView.Resources>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}"/>
+                                <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"></Setter>
+                                <Setter Property="Height" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushSize}"/>
+                                <Setter Property="Width" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushSize}"/>
+                            </Style>
+                        </ListView.Resources>
+
+                    </ListView>
+                </Grid>
+            </Grid>
+            <!--<ListView Grid.Row="2" x:Name="ColorListView" 
                                   Background="Transparent" 
                                   BorderThickness="0" 
                                   ItemsSource="{Binding Path=Colors}"
@@ -86,15 +157,15 @@
                     <Style TargetType="ListViewItem">
                         <Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}">
                         </Setter>
-                        <!--<Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}"></Setter>-->
+                        --><!--<Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}"></Setter>--><!--
                         <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"></Setter>
-                        <!--<Setter Property="Width" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushWidth}"></Setter>-->
+                        --><!--<Setter Property="Width" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushWidth}"></Setter>--><!--
                         <Setter Property="Height" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushHeight}"/>
                         <Setter Property="Width" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushHeight}"/>
                     </Style>
                 </ListView.Resources>
 
-            </ListView>
+            </ListView>-->
 
             <!--<ListView Grid.Row="2" x:Name="ColorListView" Background="Transparent" BorderThickness="0" 
                         ItemsSource="{Binding Path=Colors}"
@@ -137,14 +208,14 @@
                     <Button Grid.Column="0" 
                     Command="{Binding Path=BackCommand}"
                   
-                    Content="{StaticResource BackButtonGrid}"/>  
+                    Content="Назад"/>  
                 </Viewbox>
                 <Button Grid.Row="1" Grid.Column="2" Width="200" Height="60" Command="{Binding ResetCommand}">Сбросить</Button>
                 <Viewbox Grid.Row="1" Grid.Column="3">
                     <Button Grid.Column="1"
                        Command="{Binding Path=NextCommand}" 
                       
-                       Content="{StaticResource CompleteButtonGrid}"/> 
+                       Content="Далее"/> 
                 </Viewbox>
                 
 

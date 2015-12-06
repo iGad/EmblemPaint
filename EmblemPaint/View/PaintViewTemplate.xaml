@@ -6,11 +6,139 @@
     <DataTemplate DataType="{x:Type viewModel:PaintViewModel}">
         <Grid>
             <Grid.Background>
-                <ImageBrush ImageSource="../Images/PaintBackround.png"/>
+                <ImageBrush ImageSource="../Images/PaintBackround.png"></ImageBrush>
             </Grid.Background>
             <Grid.Resources>
                 <kernel:DoubleToIntValueConverter x:Key="DoubleToIntValueConverter"/>
             </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="6.5*"/>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="0.4*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="12*"/>
+                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Background="Transparent">
+                <!--Gerb-->
+                <Image x:Name="Image" Source="{Binding Path=PatternImage}">
+                    <kernel:PushBindingManager.PushBindings>
+                        <kernel:PushBinding TargetProperty="ActualWidth" Path="ImageWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
+                        <kernel:PushBinding TargetProperty="ActualHeight" Path="ImageHeight" Converter="{StaticResource DoubleToIntValueConverter}"/>
+                    </kernel:PushBindingManager.PushBindings>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDown">
+                            <kernel:MouseEventToCommandMap Command="{Binding MouseDownCommand}" CommandParameter="{Binding}"></kernel:MouseEventToCommandMap>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Image>
+            </Grid>
+            <Grid Grid.Row="2" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1.5*"/>
+                    <RowDefinition Height="2.5*"/>
+                    <RowDefinition Height="1.05*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="1">
+                    <!--Colors-->
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <ListView x:Name="ColorListView" 
+                                      Background="Transparent" 
+                                      BorderThickness="0" 
+                                      ItemsSource="{Binding Path=UpColors}"
+                                      SelectedItem="{Binding Path=SelectedUpColor}"
+                                      HorizontalAlignment="Stretch"
+                                      HorizontalContentAlignment="Center"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                      Margin="50,0">
+                            <kernel:PushBindingManager.PushBindings>
+                                <kernel:PushBinding TargetProperty="ActualHeight" Path="BrushContainerHeight" Converter="{StaticResource DoubleToIntValueConverter}"/>
+                                <kernel:PushBinding TargetProperty="ActualWidth" Path="BrushContainerWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
+                            </kernel:PushBindingManager.PushBindings>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" 
+                                               HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Bottom"
+                                               ItemWidth="{Binding BrushWidth}" 
+                                               />
+                                    <!--Width="{Binding ElementName=ColorListView, Path=ActualWidth}"-->
+
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+
+                            <ListView.Resources>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}"/>
+                                    <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"></Setter>
+                                    <Setter Property="Height" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushSize}"/>
+                                    <Setter Property="Width" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushSize}"/>
+                                </Style>
+                            </ListView.Resources>
+
+                        </ListView>
+                        <ListView Grid.Row="1"
+                                  Background="Transparent" 
+                                  BorderThickness="0" 
+                                  ItemsSource="{Binding Path=DownColors}"
+                                  SelectedItem="{Binding Path=SelectedDownColor}"
+                                  HorizontalAlignment="Center"
+                                  HorizontalContentAlignment="Center"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                  Margin="50,0">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" 
+                                               HorizontalAlignment="Center" 
+                                                   
+                                               ItemWidth="{Binding BrushWidth}"/>
+
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+
+                            <ListView.Resources>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}"/>
+                                    <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"></Setter>
+                                    <Setter Property="Height" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushSize}"/>
+                                    <Setter Property="Width" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushSize}"/>
+                                </Style>
+                            </ListView.Resources>
+
+                        </ListView>
+                    </Grid>
+                </Grid>
+
+                <!--<Grid Grid.Row="2">-->
+                    <!--Button-->
+                    <Button Grid.Row="2" Style="{StaticResource Button}" HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding NextCommand}">
+                        <Button.Triggers>
+                            <EventTrigger RoutedEvent="Button.Click">
+                                <SoundPlayerAction Source="../Sounds/done.wav"/>
+                            </EventTrigger>
+                        </Button.Triggers>
+                        <Grid Width="210" Height="60" Background="Transparent"></Grid>
+                        <!--<TextBlock FontSize="65">Готово!</TextBlock>-->
+                    </Button>
+                <!--</Grid>-->
+            </Grid>
+        </Grid>
+
+
+        <!--<Grid>
+            <Grid.Background>
+                <ImageBrush ImageSource="../Images/background.png"/>
+            </Grid.Background>
+            
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.5*"/>
                 <RowDefinition Height="7*"/>
@@ -24,24 +152,7 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.Row="1" Column="1" Background="Transparent">
                 <Border CornerRadius="45" Background="White">
-                    <Image x:Name="Image" Source="{Binding Path=PatternImage}">
-                        <!--<Image.Triggers>
-                            <EventTrigger RoutedEvent="Image.MouseUp">
-                                <EventTrigger.Actions>
-                                    <SoundPlayerAction Source="../Sounds/pencil_s_1.wav"/>
-                                </EventTrigger.Actions>
-                            </EventTrigger>
-                        </Image.Triggers>-->
-                        <kernel:PushBindingManager.PushBindings>
-                            <kernel:PushBinding TargetProperty="ActualWidth" Path="ImageWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
-                            <kernel:PushBinding TargetProperty="ActualHeight" Path="ImageHeight" Converter="{StaticResource DoubleToIntValueConverter}"/>
-                        </kernel:PushBindingManager.PushBindings>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDown">
-                                <kernel:MouseEventToCommandMap Command="{Binding MouseDownCommand}" CommandParameter="{Binding}"></kernel:MouseEventToCommandMap>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </Image>
+                    
                 </Border>
             </Grid>
             <Border Grid.Row="2" Grid.Column="1" Background="White" CornerRadius="45" Margin="0,15,0,0">
@@ -57,63 +168,20 @@
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
                     <Viewbox Grid.Row="0" Grid.Column="1">
-                        <TextBlock Width="160" TextWrapping="Wrap">Выбирайте цвет и раскрашивайте!</TextBlock>
+                        <TextBlock Width="160" TextWrapping="Wrap">Выбирайте цвет
+                            <LineBreak/>
+                            и раскрашивайте!</TextBlock>
                     </Viewbox>
                     <Border Grid.Row="1" Grid.Column="1" CornerRadius="45">
                         <Border.Background>
-                            <LinearGradientBrush EndPoint="1,0" StartPoint="0.75,1.5">
-                                <GradientStop Color="Black" Offset="0"/>
-                                <GradientStop Color="Black" Offset="1"/>
-                                <GradientStop Color="Black" Offset="0.5"/>
-                                <GradientStop Color="#FF2B2B2B" Offset="0.502"/>
-                            </LinearGradientBrush>
+                            <ImageBrush ImageSource="../Images/ColorsBackground.png"></ImageBrush>
                         </Border.Background>
-                        <ListView x:Name="ColorListView" 
-                                  Background="Transparent" 
-                                  BorderThickness="0" 
-                                  ItemsSource="{Binding Path=Colors}"
-                                  SelectedItem="{Binding Path=SelectedColor}"
-                                  HorizontalAlignment="Center"
-                                  HorizontalContentAlignment="Center"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                                  Margin="50,0">
-                            <kernel:PushBindingManager.PushBindings>
-                                <kernel:PushBinding TargetProperty="ActualHeight" Path="BrushContainerHeight" Converter="{StaticResource DoubleToIntValueConverter}"/>
-                                <kernel:PushBinding TargetProperty="ActualWidth" Path="BrushContainerWidth" Converter="{StaticResource DoubleToIntValueConverter}"/>
-                            </kernel:PushBindingManager.PushBindings>
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Horizontal" 
-                                               HorizontalAlignment="Center" 
-                                               ItemWidth="{Binding BrushWidth}" 
-                                               Width="{Binding ElementName=ColorListView, Path=ActualWidth}"/>
-
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-
-                            <ListView.Resources>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="Template" Value="{StaticResource ColorListViewItemTemplate}"/>
-                                    <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"></Setter>
-                                    <Setter Property="Height" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushHeight}"/>
-                                    <Setter Property="Width" Value="{Binding ElementName=ColorListView, Path=DataContext.BrushHeight}"/>
-                                </Style>
-                            </ListView.Resources>
-
-                        </ListView>
+                        
+                        
                     </Border>
-                    <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource Button}" Command="{Binding NextCommand}">
-                        <Button.Triggers>
-                            <EventTrigger RoutedEvent="Button.Click">
-                                <SoundPlayerAction Source="../Sounds/done.wav"/>
-                            </EventTrigger>
-                        </Button.Triggers>
-                        <Viewbox>
-                            <TextBlock>Готово!</TextBlock>
-                        </Viewbox>
-                    </Button>
+                    
                 </Grid>
             </Border>
-        </Grid>
+        </Grid>-->
     </DataTemplate>
 </ResourceDictionary>

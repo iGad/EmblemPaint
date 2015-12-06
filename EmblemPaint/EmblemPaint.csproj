@@ -142,6 +142,7 @@
     <Compile Include="ViewModel\ScreensaverViewModel.cs" />
     <Compile Include="ViewModel\SelectFolderViewModel.cs" />
     <Compile Include="ViewModel\SelectRegionViewModel.cs" />
+    <Compile Include="ViewModel\SendCompleteViewModel.cs" />
     <Compile Include="ViewModel\SendEmailViewModel.cs" />
     <Compile Include="ViewModel\WindowDispatcher.cs" />
     <Compile Include="View\ConfirmView.xaml.cs">
@@ -165,6 +166,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Window1.xaml.cs">
+      <DependentUpon>Window1.xaml</DependentUpon>
     </Compile>
     <Page Include="Styles.xaml">
       <SubType>Designer</SubType>
@@ -226,6 +230,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\SendCompleteView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\SendEmailView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -233,6 +241,10 @@
     <Page Include="View\WindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Window1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -257,6 +269,13 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="Images\PaintBackround.png" />
+    <Resource Include="MyriadPro-Bold_0.otf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="MyriadPro-Light.otf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -327,17 +346,49 @@
     <Resource Include="Images\logo.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Sounds\done.wav" />
-    <Content Include="Sounds\left.wav" />
-    <Content Include="Sounds\pencil_s_1.wav" />
-    <Content Include="Sounds\right.wav" />
-    <Content Include="Sounds\try_again_g.wav" />
-    <Content Include="Sounds\well_done_g.wav" />
+    <Resource Include="Images\vs.png" />
+    <Resource Include="Images\ColorsBackground.png" />
+    <Resource Include="Images\SelectRegionBackground.png" />
+    <Resource Include="Images\Cancel.png" />
+    <Resource Include="Images\Exit.png" />
+    <Resource Include="Images\Return.png" />
+    <Resource Include="Images\SendEmail.png" />
+    <Resource Include="Images\Start.png" />
+    <Resource Include="Images\TryAgain.png" />
+    <Resource Include="Images\otpravit.png" />
+    <Resource Include="Images\backspace.png" />
+    <Resource Include="Images\ResultBackground.png" />
+    <Resource Include="Images\SendEmailBackground.png" />
+    <Resource Include="Images\ResultBackground.jpg" />
+    <Resource Include="Images\v_nachalo.png" />
+    <Resource Include="Images\SendComplete.jpg" />
+    <Resource Include="Images\Stend-gerby-3-23.jpg" />
+    <Content Include="Sounds\done.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sounds\left.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sounds\mail_fly.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sounds\pencil_s_1.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sounds\right.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sounds\try_again_g.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sounds\well_done_g.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Images\ScreensaverBackground.png" />
-    <Resource Include="Images\PaintBackround.png" />
     <Resource Include="Images\SelectRegionRegionsBackground.png" />
-    <Resource Include="Images\SelectRegionTextBackground.png" />
-    <Content Include="Sounds\Button.wav" />
+    <Content Include="Sounds\Button.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

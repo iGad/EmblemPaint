@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:EmblemPaint"
                     xmlns:kernel="clr-namespace:EmblemPaint.Kernel;assembly=EmblemPaint.Kernel"
                     xmlns:viewModel="clr-namespace:EmblemPaint.ViewModel">
     <ResourceDictionary.MergedDictionaries>
@@ -13,22 +12,20 @@
                 Background="Transparent"
                 Width="{Binding ElementName=ScrollViewer, Path=DataContext.ItemWidth}"
                 Height="{Binding ElementName=ScrollViewer, Path=DataContext.ItemHeight}">
-            <!--<Border.Triggers>
-                <EventTrigger RoutedEvent="Border.MouseUp">
-                    <EventTrigger.Actions>
-                        <SoundPlayerAction Source="Sounds/Button.wav"/>
-                    </EventTrigger.Actions>
-                </EventTrigger>
-            </Border.Triggers>-->
             <Grid VerticalAlignment="Top" Margin="1,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="3*"/>
                     <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
-                <Image Source="{Binding Path=(kernel:ListViewItemModel.Thumbnail)}"/>
-                <Viewbox Grid.Row="1">
-                    <TextBlock Style="{StaticResource ListItemTextBlock}"/>
-                </Viewbox>
+                <Image Source="{Binding Path=(kernel:ListViewItemModel.Thumbnail)}" Stretch="Uniform" SnapsToDevicePixels="True">
+                    <Image.Effect>
+                        <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
+                    </Image.Effect>
+                </Image>
+                <TextBlock Grid.Row="1" 
+                           TextWrapping="WrapWithOverflow"
+                           FontSize="{Binding ElementName=ScrollViewer, Path=DataContext.Configuration.GerbThumbnailFontSize}"  
+                           Style="{StaticResource ListItemTextBlock}"/>
                 
             </Grid>
         </Border>
@@ -52,15 +49,6 @@
                         Fill="{Binding Path=(viewModel:ColorViewModel.Color), Converter={StaticResource ColorToBrushConverter}}"/>
         </Grid>
     </ControlTemplate>
-    <!--<Border CornerRadius="45" 
-            VerticalAlignment="Center"
-            BorderThickness="3"
-            Background="Transparent"
-            Style="{StaticResource ColorListItemBorderStyle}">--><!--
-        <Grid VerticalAlignment="Center">
-            <Image Source="{Binding Path=(kernel:ListViewItemModel.Thumbnail)}" StretchDirection="Both"></Image>
-        </Grid>
-    </Border>-->
 
     <ControlTemplate TargetType="Button" x:Key="ButtonTemplate">
         <Border BorderThickness="1" BorderBrush="#FFA1A1A1" CornerRadius="10">
@@ -69,46 +57,4 @@
         </Border>
     </ControlTemplate>
 
-    <Grid x:Key="NextButtonGrid">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="4*"/>
-            <ColumnDefinition Width="5*"/>
-        </Grid.ColumnDefinitions>
-        <Image Grid.Column="0"  Margin="5,5" Source="Images/NextButton2.png"/>
-        <Viewbox Grid.Column="1">
-            <TextBlock Grid.Column="1">
-                        ДАЛЕЕ
-            </TextBlock>
-        </Viewbox>
-        
-    </Grid>
-
-    <Grid x:Key="CompleteButtonGrid">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="4*"/>
-            <ColumnDefinition Width="5*"/>
-        </Grid.ColumnDefinitions>
-        <Image Grid.Column="0" Stretch="UniformToFill" Margin="5,5" Source="Images/NextButton2.png"/> <!--Margin="5,5"-->
-
-        <Viewbox Grid.Column="1">
-            <TextBlock Grid.Column="1" ><!--FontSize="18"-->
-                            ГОТОВО
-            </TextBlock>
-        </Viewbox>
-    </Grid>
-
-    <Grid x:Key="BackButtonGrid"> <!--VerticalAlignment="Center" HorizontalAlignment="Center"-->
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="3*"/>
-        </Grid.ColumnDefinitions>
-        <Image Grid.Column="0" Stretch="UniformToFill" Margin="5,5" Source="Images/GoBackArrow.png"/> <!--Width="30" Height="30"-->
-        
-        <Viewbox Grid.Column="1">
-            <TextBlock Grid.Column="1"  TextWrapping="WrapWithOverflow"><!--FontSize="14"-->
-                            ВЫБРАТЬ ДРУГОЙ ГЕРБ
-            </TextBlock>
-        </Viewbox>
-    </Grid>
-   
 </ResourceDictionary>

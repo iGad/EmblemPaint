@@ -1,11 +1,12 @@
-﻿using WindowsInput;
+﻿using System.Windows.Media.Animation;
+using WindowsInput;
 
 namespace WpfKb.LogicalKeys
 {
     public class InstantaneousModifierKey : ModifierKeyBase
     {
-        public InstantaneousModifierKey(string displayName, VirtualKeyCode keyCode) :
-            base(keyCode)
+        public InstantaneousModifierKey(string displayName, VirtualKeyCode keyCode) 
+           : base(keyCode)
         {
             DisplayName = displayName;
         }
@@ -20,7 +21,8 @@ namespace WpfKb.LogicalKeys
             // the correct value after the input has been read from the MessagePump and will not be correct
             // by the time we set IsInEffect.
             IsInEffect = InputSimulator.IsKeyDownAsync(KeyCode);
-            OnKeyPressed();
+
+            base.PlaySound();
         }
 
         public override void SynchroniseKeyState()

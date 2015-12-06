@@ -27,36 +27,37 @@ namespace WpfKb.Controls
 
         public OnScreenKeyboardSection()
         {
-            Margin = new Thickness(5);
+//            Margin = new Thickness(5);
             _buttonRows = new List<Grid>();
             _keys = new ObservableCollection<OnScreenKey>();
-            _keys.CollectionChanged += Keys_CollectionChanged;
+//            _keys.CollectionChanged += Keys_CollectionChanged;
         }
 
-        private void Keys_CollectionChanged(object sender,
-                                            System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
-                    LayoutKeys();
-                    break;
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
-                    throw new NotSupportedException("You cannot currently replace keys.");
-                case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
-                    Reset();
-                    break;
-                default:
-                    break;
-            }
-        }
+//        private void Keys_CollectionChanged(object sender,
+//                                            System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+//        {
+//            switch (e.Action)
+//            {
+//                case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
+//                case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+//                    LayoutKeys();
+//                    break;
+//                case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
+//                    throw new NotSupportedException("You cannot currently replace keys.");
+//                case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
+//                    Reset();
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
 
         private void LayoutKeys()
         {
             if (_keys == null || _keys.Count == 0) return;
 
             ResizeGrid(_keys);
+
             for (var buttonRowIndex = 0; buttonRowIndex < _buttonRows.Count; buttonRowIndex++)
             {
                 var grid = _buttonRows[buttonRowIndex];
@@ -84,6 +85,7 @@ namespace WpfKb.Controls
                 _buttonRows.Add(g);
                 Children.Add(g);
                 g.SetValue(RowProperty, extraRowIndex);
+                g.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Center);
             }
 
             // Make sure each row has enough columns

@@ -19,6 +19,8 @@ namespace WpfKb.LogicalKeys
         {
             InputMethodSwitcher.SetInputMethod(_targetLangPrefix);
             Panel.SetZIndex(_keyboardControl, Panel.GetZIndex(_keyboardControl) - 1);
+
+            base.PlaySound();
         }
     }
 }

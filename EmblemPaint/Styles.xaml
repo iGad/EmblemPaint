@@ -36,6 +36,13 @@
     <Style TargetType="Button" x:Key="TransparentButton">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="Button" x:Key="HomeButton">
@@ -72,47 +79,39 @@
                 </Style.Triggers>
             </Style>
         </Style.Resources>
-        <Setter Property="MaxHeight" Value="100"/>
-        <Setter Property="Background" Value="White"/>
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border BorderThickness="{TemplateBinding BorderThickness}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            Background="{TemplateBinding Background}"
-                            CornerRadius="45">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition Height="4*"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <ContentPresenter Grid.Row="1" VerticalAlignment="Center" 
+                    <Grid>
+                        <ContentPresenter  VerticalAlignment="Center" 
                                           HorizontalAlignment="Stretch"
                                           Content="{TemplateBinding Content}" 
                                           ContentTemplate="{TemplateBinding ContentTemplate}"/>
-                        </Grid>
-                    </Border>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
         <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#FFFFF9C4"></Setter>
+            <Trigger Property="IsPressed" Value="True">
+                <Trigger.Setters>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#F97A08" BlurRadius="40" ShadowDepth="0"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger.Setters>
             </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Background" Value="#FFB3B3B3"></Setter>
-            </Trigger>
-          
         </Style.Triggers>
+    
     </Style>
 
     
     <Style x:Key="ActionButton" TargetType="Button" BasedOn="{StaticResource Button}">
-        <Style.Setters>
+        <!--<Style.Setters>
             <Setter Property="Margin" Value="0,5"/>
-        </Style.Setters>
+        </Style.Setters>-->
         <!--<Style.Triggers>
             <EventTrigger RoutedEvent="Click">
                 <EventTrigger.Actions>
@@ -123,7 +122,7 @@
     </Style>
 
 
-    <Style x:Key="SoundActionButton" TargetType="Button" BasedOn="{StaticResource ActionButton}">
+    <Style x:Key="SoundActionButton" TargetType="Button" BasedOn="{StaticResource Button}">
         <Style.Triggers>
             <EventTrigger RoutedEvent="Click">
                 <EventTrigger.Actions>
@@ -134,7 +133,6 @@
     </Style>
 
     <Style TargetType="TextBlock" x:Key="ListItemTextBlock">
-        <Setter Property="Width" Value="150"/>
         <Setter Property="Foreground" Value="Black"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="TextAlignment" Value="Center"/>

@@ -19,6 +19,16 @@ namespace EmblemPaint
 
         #region Properties
 
+        public int SecondPageTextFontSize { get; set; } = 24;
+
+        public int ResultDescriptionFontSize { get; set; } = 24;
+
+        public int GerbThumbnailFontSize { get; set; } = 24;
+
+        public int ButtonFontSize { get; set; } = 24;
+
+        public int TitleFontSize { get; set; } = 64;
+
         /// <summary>
         /// Режим изменения информации о регионах
         /// </summary>

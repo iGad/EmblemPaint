@@ -151,7 +151,7 @@ namespace EmblemPaint.Kernel
             return result && (bytes[0] <= 239 ||
                               bytes[1] <= 239 ||
                               bytes[2] <= 239) &&
-                   (bytes[0] + bytes[1] + bytes[2] > 128);
+                   (bytes[0] + bytes[1] + bytes[2] > 80);
         }
 
         /// <summary>

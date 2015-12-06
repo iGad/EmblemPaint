@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Net.Mail;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using Prism.Commands;
 
 namespace EmblemPaint.ViewModel
 {
@@ -8,7 +11,25 @@ namespace EmblemPaint.ViewModel
         private string text = string.Empty, email = string.Empty;
         public SendEmailViewModel(Configuration configuration) : base(configuration)
         {
+            PreviewLostFocusCommand = new DelegateCommand<object>(PreviewLostFocus);
+            Update();
         }
+
+        private void PreviewLostFocus(object obj)
+        {
+            var element = obj as FrameworkElement;
+            element?.Focus();
+        }
+
+        /// <summary>
+        /// Расскрашенное изображение
+        /// </summary>
+        public BitmapSource ResultImage { get; private set; }
+
+        /// <summary>
+        /// Исходное изображение
+        /// </summary>
+        public BitmapSource SourceImage { get; private set; }
 
         /// <summary>
         /// 
@@ -20,20 +41,23 @@ namespace EmblemPaint.ViewModel
             {
                 if (this.email != value)
                 {
+                    this.email = value;
                     try
                     {
                         MailAddress m = new MailAddress(value);
                     }
                     catch
                     {
-                        throw  new ArgumentException("Введен неверный адрес");
+                        throw new ArgumentException("Введен неверный адрес");
                     }
-                    this.email = value;
+                    
                     OnPropertyChanged(nameof(Email));
                     NextCommand.RaiseCanExecuteChanged();
                 }
             }
         }
+
+        public DelegateCommand<object> PreviewLostFocusCommand { get; private set; }
 
         /// <summary>
         /// 
@@ -56,6 +80,28 @@ namespace EmblemPaint.ViewModel
             }
         }
 
+        public override void Reconfigure(Configuration newConfig)
+        {
+            base.Reconfigure(newConfig);
+            Update();
+        }
+
+        private void Update()
+        {
+            if (Configuration.Painter != null)
+            {
+                this.email = string.Empty;
+                Text = string.Empty;
+                ResultImage = Configuration.Painter.FilledImage;
+                SourceImage = Configuration.Painter.SourceImage;
+            }
+        }
+
+        protected override void Next()
+        {
+            RaiseNextCommandExecuted();
+        }
+
         protected override bool CanExecuteNextCommand()
         {
             try
@@ -68,10 +114,6 @@ namespace EmblemPaint.ViewModel
                 return false;
             }
         }
-
-        protected override void Next()
-        {
-            Home(false);
-        }
+        
     }
 }

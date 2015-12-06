@@ -4,37 +4,16 @@
     <DataTemplate DataType="{x:Type viewModel:ScreensaverViewModel}">
         <Grid>
             <Grid.Background>
-                <ImageBrush ImageSource="../Images/ScreensaverBackground.png"></ImageBrush>
+                <ImageBrush ImageSource="../Images/ScreensaverBackground.png" Stretch="Fill"></ImageBrush>
             </Grid.Background>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="2*"></RowDefinition>
-                <RowDefinition Height="4*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
-            </Grid.RowDefinitions>
             <!--<local:ScreensaverAnimation Grid.Row="2"/>-->
-            <Viewbox Grid.Row="0">
-                <TextBlock HorizontalAlignment="Stretch">
-                    РаскрасЬ
-                    <LineBreak/>
-                    свой герб
-                </TextBlock>
-            </Viewbox>
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="13*"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="1" Style="{StaticResource ActionButton}" Command="{Binding Path=NextCommand}">
-                    <Viewbox>
-                        <TextBlock Width="150" HorizontalAlignment="Stretch">
-                                Начать
-                        </TextBlock>
-                    </Viewbox>
-                </Button>
-            </Grid>
+
+            <Button VerticalAlignment="Bottom" Style="{StaticResource Button}" HorizontalAlignment="Center" Margin="0,0,0,147" Command="{Binding Path=NextCommand}">
+                <Image Stretch="None" Source="../Images/Start.png"/>
+            </Button>
+            <!--<TextBlock FontSize="24" VerticalAlignment="Top" FontFamily="/MyriadPro-Light.otf#Myriad Pro">овыфа лоалфо ывралфо ыдв</TextBlock>
+            <TextBlock FontSize="24" VerticalAlignment="Top" Margin="0,40,0,0">овыфа лоалфо ывралфо ыдв</TextBlock>-->
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

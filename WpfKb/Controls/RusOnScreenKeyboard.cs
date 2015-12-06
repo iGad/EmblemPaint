@@ -45,7 +45,7 @@ namespace WpfKb.Controls
             var mainSection = new OnScreenKeyboardSection();
             var mainKeys = new ObservableCollection<OnScreenKey>
                                {
-                                   new OnScreenKey { GridRow = 0, GridColumn = 0, Key =  new ShiftSensitiveKey(VirtualKeyCode.OEM_3, new List<string> { "ё", "Ё" })},
+                                   new OnScreenKey { GridRow = 0, GridColumn = 0, Key =  new CaseSensitiveKey(VirtualKeyCode.OEM_3, new List<string> { "ё", "Ё" })},
                                    new OnScreenKey { GridRow = 0, GridColumn = 1, Key =  new ShiftSensitiveKey(VirtualKeyCode.VK_1, new List<string> { "1", "!" })},
                                    new OnScreenKey { GridRow = 0, GridColumn = 2, Key =  new ShiftSensitiveKey(VirtualKeyCode.VK_2, new List<string> { "2", "\"" })},
                                    new OnScreenKey { GridRow = 0, GridColumn = 3, Key =  new ShiftSensitiveKey(VirtualKeyCode.VK_3, new List<string> { "3", "№" })},

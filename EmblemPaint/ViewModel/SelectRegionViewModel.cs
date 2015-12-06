@@ -65,7 +65,7 @@ namespace EmblemPaint.ViewModel
                         Configuration.SelectedRegion = value.Region;
                         Next();
                     }
-                    Dispatcher.CurrentDispatcher.Invoke(() => NextCommand.RaiseCanExecuteChanged());
+                    //Dispatcher.CurrentDispatcher.Invoke(() => NextCommand.RaiseCanExecuteChanged());
 
                 }
             }
@@ -255,14 +255,14 @@ namespace EmblemPaint.ViewModel
 
         #region Overrides
 
-        /// <summary>
-        /// Блокировка кнопки Далее, если не выбран регион
-        /// </summary>
-        /// <returns></returns>
-        protected override bool CanExecuteNextCommand()
-        {
-            return Configuration.SelectedRegion != null;
-        }
+        ///// <summary>
+        ///// Блокировка кнопки Далее, если не выбран регион
+        ///// </summary>
+        ///// <returns></returns>
+        //protected override bool CanExecuteNextCommand()
+        //{
+        //    return Configuration.SelectedRegion != null;
+        //}
 
         public override void Reconfigure(Configuration newConfig)
         {
@@ -270,6 +270,10 @@ namespace EmblemPaint.ViewModel
             foreach (var regionViewModel in Regions)
             {
                 regionViewModel.IsSelected = false;
+            }
+            if (Configuration.ModifyMode && !Configuration.UseConfigFile)
+            {
+                Update();
             }
             //Update();
         }
@@ -282,6 +286,12 @@ namespace EmblemPaint.ViewModel
                 Configuration.SelectedRegion = Regions.First().Region;
             }
             //SelectedRegion = Regions.FirstOrDefault();
+        }
+
+        protected override void Next()
+        {
+            HorizontalOffset = 0;
+            base.Next();
         }
 
         #endregion

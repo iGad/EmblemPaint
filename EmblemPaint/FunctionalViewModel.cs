@@ -20,7 +20,7 @@ namespace EmblemPaint
         /// <summary>
         /// Настраиваемая конфигурация окон
         /// </summary>
-        protected internal Configuration Configuration { get; set; }
+        public Configuration Configuration { get; set; }
 
         #region Commands
 

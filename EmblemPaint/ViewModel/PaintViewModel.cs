@@ -19,14 +19,15 @@ namespace EmblemPaint.ViewModel
         private Region region;
         private WriteableBitmap patternImage;
         private Painter painter;
-        private ColorViewModel selectedColorViewModel;
-        private double imageWidth, imageHeight, brushWidth, brushHeight;
+        private ColorViewModel selectedColorViewModel, selectedUpColor, selectedDownColor;
+        private double imageWidth, imageHeight, brushContainerHeight, brushContainerWidth, brushWidth = double.MaxValue, brushHeight = double.MaxValue;
 
         public PaintViewModel(Configuration configuration):base(configuration)
         {
             MouseDownCommand = new DelegateCommand<EventInformation<MouseEventArgs>>(OnMouseDown);
             BrushContainerWidth = Configuration.WindowWidth * (double)169 / 225;
-            BrushContainerHeight = Configuration.WindowHeight * (5 / (double)13 - 30) * 3 / 5.5;
+            
+            BrushContainerHeight = (Configuration.WindowHeight * 5 / (double)13 - 30) * 3 / 5.5;
         }
 
         #region Properties
@@ -50,11 +51,13 @@ namespace EmblemPaint.ViewModel
         /// </summary>
         public double BrushContainerHeight
         {
+            get { return this.brushContainerHeight; }
             set
             {
-                if (value > 0)
+                if (value > 0 && !this.brushContainerHeight.Equals(value))
                 {
-                    BrushHeight = value / 2 - 12;
+                    this.brushContainerHeight = value;
+                    BrushHeight = value  - 6;
                 }
             }
         }
@@ -64,12 +67,14 @@ namespace EmblemPaint.ViewModel
         /// </summary>
         public double BrushContainerWidth
         {
+            get { return this.brushContainerWidth; }
             set
             {
-                if (value > 0)
+                if (value > 0 && !this.brushContainerWidth.Equals(value))
                 {
+                    this.brushContainerWidth = value;
                     var width = value/4 - 12;
-                    BrushWidth = Math.Max(width, BrushHeight);
+                    BrushWidth = width;
                 }
             }
         }
@@ -82,10 +87,11 @@ namespace EmblemPaint.ViewModel
             get { return this.brushWidth; }
             set
             {
-                if (!this.brushWidth.Equals(value))
+                if (!this.brushWidth.Equals(value) && value > 0)
                 {
                     this.brushWidth = value;
                     OnPropertyChanged(nameof(BrushWidth));
+                    OnPropertyChanged(nameof(BrushSize));
                 }
             }
         }
@@ -98,13 +104,16 @@ namespace EmblemPaint.ViewModel
             get { return this.brushHeight; }
             set
             {
-                if (!this.brushHeight.Equals(value))
+                if (!this.brushHeight.Equals(value) && value > 0)
                 {
                     this.brushHeight = value;
                     OnPropertyChanged(nameof(BrushHeight));
+                    OnPropertyChanged(nameof(BrushSize));
                 }
             }
         }
+
+        public double BrushSize => Math.Min(BrushWidth, BrushHeight);
 
         /// <summary>
         /// Ширина изображения на экране
@@ -153,6 +162,16 @@ namespace EmblemPaint.ViewModel
         /// <summary>
         /// Набор цветов для закрашивания
         /// </summary>
+        public ObservableCollection<ColorViewModel> UpColors { get; protected set; }
+
+        /// <summary>
+        /// Набор цветов для закрашивания
+        /// </summary>
+        public ObservableCollection<ColorViewModel> DownColors { get; protected set; }
+
+        /// <summary>
+        /// Набор цветов для закрашивания
+        /// </summary>
         public ObservableCollection<ColorViewModel> Colors { get; protected set; } 
 
         /// <summary>
@@ -163,22 +182,56 @@ namespace EmblemPaint.ViewModel
         /// <summary>
         /// Текущий выбранный цвет закраски
         /// </summary>
-        public ColorViewModel SelectedColor
+        public ColorViewModel SelectedColor => SelectedUpColor??SelectedDownColor;
+
+        /// <summary>
+        /// Текущий выбранный цвет закраски
+        /// </summary>
+        public ColorViewModel SelectedUpColor
         {
             get
             {
-                return this.selectedColorViewModel;
+                return this.selectedUpColor;
             }
             set
             {
-                if (this.selectedColorViewModel != value)
+                if (this.selectedUpColor != value)
                 {
-                    this.selectedColorViewModel = value;
-                    OnPropertyChanged(nameof(SelectedColor));
+                    this.selectedUpColor = value;
+                    if (value != null)
+                    {
+                        SelectedDownColor = null;
+                    }
+                    OnPropertyChanged(nameof(SelectedUpColor));
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Текущий выбранный цвет закраски
+        /// </summary>
+        public ColorViewModel SelectedDownColor
+        {
+            get
+            {
+                return this.selectedDownColor;
+            }
+            set
+            {
+                if (this.selectedDownColor != value)
+                {
+                    
+                    this.selectedDownColor = value;
+                    if (value != null)
+                    {
+                        SelectedUpColor = null;
+                    }
+                    
+                    OnPropertyChanged(nameof(SelectedDownColor));
+                }
+            }
+        }
+
         #endregion
 
         private void OnMouseDown(EventInformation<MouseEventArgs> obj)
@@ -193,7 +246,7 @@ namespace EmblemPaint.ViewModel
                 Convert.ToInt32(point.Y * SourceImage.PixelHeight / ImageHeight));
             Color sourceColor = SourceImage.GetColor((int)normalizePoint.X, (int)normalizePoint.Y);
             byte[] pixel = { sourceColor.B, sourceColor.G, sourceColor.R, sourceColor.A };
-            if (Utilities.IsColorPixel(pixel))
+            if (this.painter.IsFillingPoint(normalizePoint))/*Utilities.IsColorPixel(pixel)*/
             {
                 Utilities.PlaySound("Sounds/pencil_s_1.wav");
                 PatternImage = this.painter.FillImage(normalizePoint, SelectedColor.Color, 40);
@@ -218,7 +271,11 @@ namespace EmblemPaint.ViewModel
                 ResetPainter();
                 Colors?.Clear();
                 Colors = GetColors(this.region);
-                Colors.First().IsSelected = true;
+                UpColors?.Clear();
+                UpColors = new ObservableCollection<ColorViewModel>(Colors.Take(4));
+                DownColors?.Clear();
+                DownColors = new ObservableCollection<ColorViewModel>(Colors.Except(UpColors));
+                UpColors.First().IsSelected = true;
             }
 
             //BrushContainerWidth = Configuration.WindowWidth*(double) 169/225;

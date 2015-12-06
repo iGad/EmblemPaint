@@ -16,20 +16,21 @@ namespace EmblemPaint
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
+            //Window1 w = new Window1();
+            //w.Show();
             bool exit = false;
-
-            Configuration configuration = LoadConfiguration();
-            if (configuration.ModifyMode)
-            {
-                PrepareRegions(configuration);
-            }
             while (!exit)
             {
+                Configuration configuration = LoadConfiguration();
+                if (configuration.ModifyMode)
+                {
+                    PrepareRegions(configuration);
+                }
+           
                 var windowDispatcher = new WindowDispatcher(configuration, CreateViewModels(configuration));
                 try
                 {
-                    var mainWindow = new MainWindow {DataContext = windowDispatcher};
+                    var mainWindow = new MainWindow { DataContext = windowDispatcher };
                     mainWindow.ShowDialog();
                     exit = true;
                 }
@@ -93,7 +94,8 @@ namespace EmblemPaint
                     new SelectRegionViewModel(configuration),
                     new PaintViewModel(configuration),
                     new ResultViewModel(configuration),
-                    new SendEmailViewModel(configuration)
+                    new SendEmailViewModel(configuration),
+                    new SendCompleteViewModel(configuration)
                 };
             }
             

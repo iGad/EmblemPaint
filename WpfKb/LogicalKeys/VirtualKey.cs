@@ -1,4 +1,6 @@
-﻿using WindowsInput;
+﻿using System;
+using System.Windows.Media;
+using WindowsInput;
 
 namespace WpfKb.LogicalKeys
 {
@@ -19,19 +21,20 @@ namespace WpfKb.LogicalKeys
             }
         }
 
-        public VirtualKey(VirtualKeyCode keyCode, string displayName)
+        public VirtualKey(VirtualKeyCode keyCode, string displayName) : this()
         {
             DisplayName = displayName;
             KeyCode = keyCode;
         }
 
-        public VirtualKey(VirtualKeyCode keyCode)
+        public VirtualKey(VirtualKeyCode keyCode) : this()
         {
             KeyCode = keyCode;
         }
 
         public VirtualKey()
         {
+            
         }
 
         public override void Press()

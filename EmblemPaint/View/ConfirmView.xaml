@@ -7,7 +7,7 @@
         WindowState="Maximized"
         WindowStyle="None"
         AllowsTransparency="True" Background="#00FFFFFF">
-    <!--Height="500" Background="#1FFFFFFF" Width="900"-->
+    <!--Height="500" Background="#1FFFFFFF" #60000000 Width="900"-->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -25,11 +25,7 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Border Grid.ColumnSpan="2" Style="{StaticResource WhiteCircledBorder}" Margin="0,5">
+            <Border Style="{StaticResource WhiteCircledBorder}" Margin="0,5" Width="{Binding ElementName=Button, Path=ActualWidth}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="2*"/>
@@ -43,15 +39,11 @@
                     </Viewbox>
                 </Grid>
             </Border>
-            <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  Style="{StaticResource SoundActionButton}"  Click="ExitButtonClick">
-                <Viewbox>
-                    <TextBlock>Выйти</TextBlock>
-                </Viewbox>
+            <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource SoundActionButton}" x:Name="Button"  Click="ExitButtonClick">
+                <Image Stretch="None" Source="../Images/Exit.png"/>
             </Button>
-            <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SoundActionButton}"  Click="CancelButtonClick" >
-                <Viewbox>
-                    <TextBlock>Отмена</TextBlock>
-                </Viewbox>
+            <Button Grid.Row="2" Grid.Column="0" Style="{StaticResource SoundActionButton}" Click="CancelButtonClick">
+                <Image Stretch="None" Source="../Images/Cancel.png"/>
             </Button>
         </Grid>
     </Grid>

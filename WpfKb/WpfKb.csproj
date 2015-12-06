@@ -48,6 +48,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -70,16 +71,21 @@
     <Reference Include="PresentationFramework">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="WriteableBitmapEx.Wpf, Version=1.5.0.0, Culture=neutral, PublicKeyToken=50375ca6144f1c69, processorArchitecture=MSIL">
-      <HintPath>..\packages\WriteableBitmapEx.1.5.0.0\lib\net40\WriteableBitmapEx.Wpf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\AutoHideBehavior.cs" />
+    <Compile Include="Controls\EngEmailKeyboard.xaml.cs">
+      <DependentUpon>EngEmailKeyboard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FixedKeyboard.xaml.cs">
+      <DependentUpon>FixedKeyboard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\FloatingTouchScreenKeyboard.xaml.cs">
       <DependentUpon>FloatingTouchScreenKeyboard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\FixedOnScreenKeyboard.cs" />
+    <Compile Include="Controls\LettersEmailScreenKeyboard.cs" />
+    <Compile Include="Controls\NumbersEmailScreenKeyboard.cs" />
     <Compile Include="Controls\RusEngKeyboard.xaml.cs">
       <DependentUpon>RusEngKeyboard.xaml</DependentUpon>
     </Compile>
@@ -96,6 +102,7 @@
     <Compile Include="LogicalKeys\NumLockSensitiveKey.cs" />
     <Compile Include="LogicalKeys\ShiftSensitiveKey.cs" />
     <Compile Include="LogicalKeys\StringKey.cs" />
+    <Compile Include="LogicalKeys\SwitchKeyboardKey.cs" />
     <Compile Include="LogicalKeys\SwitchLanguageKey.cs" />
     <Compile Include="LogicalKeys\TogglingModifierKey.cs" />
     <Compile Include="LogicalKeys\VirtualKey.cs" />
@@ -119,7 +126,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -127,6 +133,14 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\EngEmailKeyboard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\FixedKeyboard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\FloatingTouchScreenKeyboard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -135,6 +149,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Sounds\keyboard.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

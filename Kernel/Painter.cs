@@ -72,13 +72,19 @@ namespace EmblemPaint.Kernel
             {
                 throw new ArgumentException("Wrong point coordinates");
             }
-
+            
             Color defaultColor = GetSourceColor((int)startPoint.X, (int)startPoint.Y);
             FillPixels(defaultColor, fillingColor, precision);
             WriteableBitmap image = new WriteableBitmap(FilledImage.Clone());
             image.WritePixels(new Int32Rect(0, 0, this.sourceWidth, this.sourceHeight), this.patternImageBytes, this.stride, 0);
             FilledImage = image;
             return FilledImage;
+        }
+
+        public bool IsFillingPoint(Point point)
+        {
+            int index = ((int) point.X)*4 + ((int) point.Y)*this.stride;
+            return !IsPixelsEquals(index, this.sourceImageBytes, this.sourcePatternImageBytes);
         }
 
         internal Color GetSourceColor(int x, int y)
@@ -178,6 +184,13 @@ namespace EmblemPaint.Kernel
                   Math.Abs(firstImage[pixelIndex + 3] - secondImage[pixelIndex + 3]) <= EqualtionConcurancy;
         }
 
+        private bool IsSourceAndFilledPixelsEquals(int pixelIndex)
+        {
+            return Math.Abs(this.sourceImageBytes[pixelIndex] - this.patternImageBytes[pixelIndex]) <= 1 &&
+                   Math.Abs(this.sourceImageBytes[pixelIndex + 1] - this.patternImageBytes[pixelIndex + 1]) <= 1 &&
+                   Math.Abs(this.sourceImageBytes[pixelIndex + 2] - this.patternImageBytes[pixelIndex + 2]) <= 1 &&
+                   Math.Abs(this.sourceImageBytes[pixelIndex + 3] - this.patternImageBytes[pixelIndex + 3]) <= 1;
+        }
 
         #region overrides
 

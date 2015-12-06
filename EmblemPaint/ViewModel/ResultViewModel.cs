@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Media;
 using System.Windows.Media.Imaging;
 using EmblemPaint.Kernel;
@@ -9,6 +8,8 @@ namespace EmblemPaint.ViewModel
 {
     public class ResultViewModel:FunctionalViewModel
     {
+        private const string GoodCongratulations = "Поздравляем! Вы угадали!";
+        private const string BadCongratulations = "Поздравляем! Вы почти угадали!";
         private int percents;
 
         public ResultViewModel(Configuration configuration):base(configuration)
@@ -37,6 +38,8 @@ namespace EmblemPaint.ViewModel
         /// Процент совпадения
         /// </summary>
         public string Result { get; private set; }
+
+        public string Congratulations { get; private set; }
 
         /// <summary>
         /// Описание герба
@@ -81,13 +84,17 @@ namespace EmblemPaint.ViewModel
             SourceImage = Configuration.Painter.SourceImage;
             Description = Configuration.SelectedRegion.Description;
             this.percents = Configuration.Painter.CalculateFillAccuracy();
+            this.percents = this.percents > 98 ? 100 : this.percents;
+            Congratulations = this.percents > 99 ? GoodCongratulations : BadCongratulations;
             Result = this.percents + "%";
             FillingAngle = this.percents * Math.PI / 50;
             StartAngle = Math.PI + (2 * Math.PI - FillingAngle);
+            OnPropertyChanged(string.Empty);
         }
 
         protected override void Home(bool? askUser)
         {
+
             Utilities.PlaySound("Sounds/Button.wav");
             base.Home(askUser);
         }
